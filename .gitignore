@@ -1,0 +1,10 @@
+# Backend
+hansport_v2be/target/
+
+# IDE
+.idea/
+*.iml
+
+# Frontend
+hansport_v2fe/node_modules/
+hansport_v2fe/dist/
