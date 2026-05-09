@@ -1,0 +1,11 @@
+package com.javaweb.repository;
+
+import com.javaweb.domain.Product;
+import com.javaweb.domain.Role;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+
+public interface RoleRepository extends JpaRepository<Role,Long>, JpaSpecificationExecutor<Role> {
+    Role findByName(String name);
+    boolean existsByName(String name);
+}
