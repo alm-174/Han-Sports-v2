@@ -95,6 +95,7 @@ public class AuthController {
                 .body(resLoginDTO);
     }
 
+
     @PostMapping("/auth/register")
     @ApiMessage("register a user")
     public ResponseEntity<ResCreateUserDTO> register(@RequestBody @Valid ReqRegisterDTO registerDTO) throws IdInvalidException {
@@ -112,7 +113,7 @@ public class AuthController {
 
         String name = (String) payload.get("name");
 
-        //User currentUser = this.userService.googleUser(email, name);
+        User currentUser = this.userService.googleUser(email, name);
 
         ResLoginDTO resLoginDTO = new ResLoginDTO();
 

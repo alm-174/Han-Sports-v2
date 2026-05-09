@@ -2,12 +2,14 @@ package com.javaweb.service;
 
 import com.javaweb.domain.Product;
 import com.javaweb.domain.User;
+import com.javaweb.domain.request.ReqProductDTO;
 import com.javaweb.domain.response.ResultPaginationDTO;
 import com.javaweb.domain.response.product.ResCreateProductDTO;
 import com.javaweb.domain.response.product.ResProductDTO;
 import com.javaweb.domain.response.product.ResUpdateProductDTO;
 import com.javaweb.domain.response.user.ResUserDTO;
 import com.javaweb.repository.ProductRepository;
+import com.javaweb.util.error.IdInvalidException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -24,27 +26,31 @@ public class ProductService {
         this.productRepository = productRepository;
     }
 
-    public ResCreateProductDTO handleSaveProduct(Product product) {
+    public ResCreateProductDTO handleSaveProduct(ReqProductDTO req) throws IdInvalidException {
+        if (this.productRepository.existsByName(req.getName())) {
+            throw new IdInvalidException("Sản phẩm đã tồn tại");
+        }
+        Product product = new Product();
+        this.applyProductRequest(product, req);
         Product currentProduct = this.productRepository.save(product);
         return this.convertToResCreateProductDTO(currentProduct);
     }
 
-    public ResUpdateProductDTO handleUpdateProduct(Product product) {
-        Optional<Product> optionalPr = this.productRepository.findById(product.getId());
-        if (optionalPr.isPresent()) {
-            Product currentProduct = optionalPr.get();
-            currentProduct.setName(product.getName());
-            currentProduct.setPrice(product.getPrice());
-            currentProduct.setShortDesc(product.getShortDesc());
-            currentProduct.setDetailDesc(product.getDetailDesc());
-            currentProduct.setBrand(product.getBrand());
-            currentProduct.setTarget(product.getTarget());
-            currentProduct.setQuantity(product.getQuantity());
-            this.productRepository.save(currentProduct);
-            return convertToResUpdateProductDTO(currentProduct);
+    public ResUpdateProductDTO handleUpdateProduct(ReqProductDTO product) throws IdInvalidException {
+        Product currentProduct = this.productRepository.findById(product.getId())
+                .orElseThrow(() -> new IdInvalidException("Không có sản phẩm"));
+
+        Optional<Product> sameName = this.productRepository.findByName(product.getName());
+        if (sameName.isPresent() && sameName.get().getId() != currentProduct.getId()) {
+            throw new IdInvalidException("Tên sản phẩm đã tồn tại");
         }
-        return null;
+
+        this.applyProductRequest(currentProduct, product);
+        this.productRepository.save(currentProduct);
+        return convertToResUpdateProductDTO(currentProduct);
     }
+
+
     public ResProductDTO fetchProductById(long id) {
         Optional<Product> optionalPr = this.productRepository.findById(id);
         if(optionalPr.isPresent()) {
@@ -83,6 +89,18 @@ public class ProductService {
 
     public boolean existsById(long id){
         return this.productRepository.existsById(id);
+    }
+
+    private void applyProductRequest(Product product, ReqProductDTO req) {
+        product.setName(req.getName());
+        product.setPrice(req.getPrice());
+        product.setShortDesc(req.getShortDesc());
+        product.setDetailDesc(req.getDetailDesc());
+        product.setBrand(req.getBrand());
+        product.setTarget(req.getTarget());
+        product.setQuantity(req.getQuantity());
+        product.setSold(req.getSold());
+        product.setImage(req.getImage());
     }
 
     public ResCreateProductDTO convertToResCreateProductDTO(Product product) {

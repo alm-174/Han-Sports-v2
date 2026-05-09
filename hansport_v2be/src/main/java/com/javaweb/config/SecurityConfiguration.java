@@ -46,7 +46,7 @@ public class SecurityConfiguration {
                 .cors(Customizer.withDefaults())
                 .authorizeHttpRequests(
                         authz -> authz
-                                .requestMatchers("/", "/api/v1/auth/login", "/api/v1/auth/register",
+                                .requestMatchers("/", "/api/v1/auth/login", "/api/v1/auth/register", "/api/v1/auth/google",
                                         "/api/v1/auth/refresh", "/storage/**").permitAll()
                                 .requestMatchers(HttpMethod.GET, "/api/v1/products", "/api/v1/products/**").permitAll()
                                 .requestMatchers(HttpMethod.POST, "/api/v1/products", "/api/v1/files").hasRole("ADMIN")

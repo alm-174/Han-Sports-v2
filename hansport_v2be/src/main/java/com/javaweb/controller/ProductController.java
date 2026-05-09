@@ -2,6 +2,7 @@ package com.javaweb.controller;
 
 import com.javaweb.domain.Product;
 import com.javaweb.domain.User;
+import com.javaweb.domain.request.ReqProductDTO;
 import com.javaweb.domain.response.ResultPaginationDTO;
 import com.javaweb.domain.response.product.ResCreateProductDTO;
 import com.javaweb.domain.response.product.ResProductDTO;
@@ -27,17 +28,13 @@ public class ProductController {
 
     @PostMapping("/products")
     @ApiMessage("create a product")
-    public ResponseEntity<ResCreateProductDTO> createProduct(@RequestBody @Valid Product product) throws IdInvalidException {
-
-        if(this.productService.existsByName(product.getName())){
-            throw new IdInvalidException("Sản phẩm đã tồn tại");
-        }
+    public ResponseEntity<ResCreateProductDTO> createProduct(@RequestBody @Valid ReqProductDTO product) throws IdInvalidException {
         return ResponseEntity.status(HttpStatus.CREATED).body(this.productService.handleSaveProduct(product));
     }
 
     @PutMapping("/products")
     @ApiMessage("update a product")
-    public ResponseEntity<ResUpdateProductDTO> updateProduct(@RequestBody @Valid Product product) throws IdInvalidException {
+    public ResponseEntity<ResUpdateProductDTO> updateProduct(@RequestBody @Valid ReqProductDTO product) throws IdInvalidException {
         if(!this.productService.existsById(product.getId())){
             throw new IdInvalidException("Không có sản phẩm");
         }
@@ -70,6 +67,5 @@ public class ProductController {
                                                               Pageable pageable){
         return ResponseEntity.status(HttpStatus.OK).body(this.productService.fetchAllProducts(spec, pageable));
     }
-
 
 }

@@ -2,18 +2,21 @@ package com.javaweb.service;
 
 import com.javaweb.domain.*;
 import com.javaweb.domain.request.ReqOrderDTO;
+import com.javaweb.domain.request.ReqUpdateOrderStatusDTO;
 import com.javaweb.domain.response.ResultPaginationDTO;
 import com.javaweb.domain.response.cartdetail.ResCartDetailDTO;
 import com.javaweb.domain.response.order.ResOrderDTO;
 import com.javaweb.domain.response.orderdetail.ResOrderDetailDTO;
 import com.javaweb.domain.response.user.ResUserDTO;
 import com.javaweb.repository.*;
+import com.javaweb.util.error.IdInvalidException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -102,6 +105,25 @@ public class OrderService {
         return resultPaginationDTO;
     }
 
+    public ResOrderDTO updateOrderStatus(ReqUpdateOrderStatusDTO req) throws IdInvalidException {
+        Order order = this.orderRepository.findById(req.getId())
+                .orElseThrow(() -> new IdInvalidException("Đơn hàng không tồn tại"));
+        String status = req.getStatus().trim().toUpperCase();
+        List<String> allowedStatus = Arrays.asList("PENDING", "CONFIRMED", "SHIPPING", "COMPLETED", "CANCELLED");
+        if (!allowedStatus.contains(status)) {
+            throw new IdInvalidException("Trạng thái đơn hàng không hợp lệ");
+        }
+        order.setStatus(status);
+        return this.convertToResOrderDTO(this.orderRepository.save(order));
+    }
+
+    public ResultPaginationDTO fetchMyOrders(String email, Pageable pageable) throws IdInvalidException {
+        User currentUser = this.userRepository.findByEmail(email)
+                .orElseThrow(() -> new IdInvalidException("Người dùng không tồn tại"));
+        Page<Order> orders = this.orderRepository.findByUser(currentUser, pageable);
+        return this.convertToPaginationDTO(orders, pageable);
+    }
+
     public void deleteOrder(String email, long id){
         User currentUSer = this.userRepository.findByEmail(email).isPresent() ?
                 this.userRepository.findByEmail(email).get() : null;
@@ -164,6 +186,23 @@ public class OrderService {
         resOrderDetailDTO.setCreatedAt(orderDetail.getCreatedAt());
         resOrderDetailDTO.setUpdatedAt(orderDetail.getUpdatedAt());
         return resOrderDetailDTO;
+    }
+
+    private ResultPaginationDTO convertToPaginationDTO(Page<Order> orders, Pageable pageable) {
+        ResultPaginationDTO resultPaginationDTO = new ResultPaginationDTO();
+        ResultPaginationDTO.Meta meta = new ResultPaginationDTO.Meta();
+
+        meta.setPage(pageable.getPageNumber()+1);
+        meta.setPagesize(pageable.getPageSize());
+        meta.setPages(orders.getTotalPages());
+        meta.setTotal(orders.getTotalElements());
+
+        resultPaginationDTO.setMeta(meta);
+        resultPaginationDTO.setResult(orders.getContent()
+                .stream().map(this::convertToResOrderDTO)
+                .collect(Collectors.toList()));
+
+        return resultPaginationDTO;
     }
 
 

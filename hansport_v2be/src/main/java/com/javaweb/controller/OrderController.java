@@ -3,6 +3,7 @@ package com.javaweb.controller;
 import com.javaweb.domain.Order;
 import com.javaweb.domain.User;
 import com.javaweb.domain.request.ReqOrderDTO;
+import com.javaweb.domain.request.ReqUpdateOrderStatusDTO;
 import com.javaweb.domain.response.ResultPaginationDTO;
 import com.javaweb.domain.response.order.ResOrderDTO;
 import com.javaweb.service.OrderService;
