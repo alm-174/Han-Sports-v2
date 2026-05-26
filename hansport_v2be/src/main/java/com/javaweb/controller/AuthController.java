@@ -1,6 +1,5 @@
 package com.javaweb.controller;
 
-<<<<<<< HEAD
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
 import com.javaweb.domain.User;
 import com.javaweb.domain.request.ReqGoogleLoginDTO;
@@ -10,25 +9,14 @@ import com.javaweb.domain.response.ResLoginDTO;
 import com.javaweb.domain.response.role.ResRoleDTO;
 import com.javaweb.domain.response.user.ResCreateUserDTO;
 import com.javaweb.service.GoogleTokenVerifierService;
-=======
-import com.javaweb.domain.User;
-import com.javaweb.domain.request.ReqLoginDTO;
-import com.javaweb.domain.response.ResLoginDTO;
-import com.javaweb.domain.response.role.ResRoleDTO;
->>>>>>> f4b3851583e6f81662849e37f18856b9cedbe2cf
 import com.javaweb.service.UserService;
 import com.javaweb.util.SecurityUtil;
 import com.javaweb.util.annotation.ApiMessage;
 import com.javaweb.util.error.IdInvalidException;
-<<<<<<< HEAD
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-=======
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpHeaders;
->>>>>>> f4b3851583e6f81662849e37f18856b9cedbe2cf
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -44,15 +32,11 @@ public class AuthController {
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final SecurityUtil securityUtil;
     private final UserService userService;
-<<<<<<< HEAD
     private final GoogleTokenVerifierService  googleTokenVerifierService;
-=======
->>>>>>> f4b3851583e6f81662849e37f18856b9cedbe2cf
 
     @Value("${hansport.jwt.refreshtoken-validity-in-seconds}")
     private Long refreshTokenExpiration;
 
-<<<<<<< HEAD
     @Value("${app.cookie.secure:false}")
     private boolean secureCookie;
 
@@ -65,16 +49,6 @@ public class AuthController {
 
     @PostMapping("/auth/login")
     public ResponseEntity<ResLoginDTO> login(@RequestBody @Valid ReqLoginDTO loginDTO) {
-=======
-    public AuthController(AuthenticationManagerBuilder authenticationManagerBuilder, SecurityUtil securityUtil, UserService userService) {
-        this.authenticationManagerBuilder = authenticationManagerBuilder;
-        this.securityUtil = securityUtil;
-        this.userService = userService;
-    }
-
-    @PostMapping("/auth/login")
-    public ResponseEntity<ResLoginDTO> login(@RequestBody ReqLoginDTO loginDTO) {
->>>>>>> f4b3851583e6f81662849e37f18856b9cedbe2cf
 // Nạp input gồm username/password vào Security
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
                 loginDTO.getUsername(), loginDTO.getPassword());
@@ -89,7 +63,6 @@ public class AuthController {
 
         ResLoginDTO resLoginDTO = new ResLoginDTO();
         User currentUserDB = this.userService.getUserByUsername(loginDTO.getUsername());
-<<<<<<< HEAD
         if (currentUserDB == null) {
             throw new org.springframework.security.core.userdetails.UsernameNotFoundException("Username/password không hợp lệ");
         }
@@ -101,18 +74,6 @@ public class AuthController {
                 currentUserDB.getFullName(),
                 role);
         resLoginDTO.setUser(userLogin);
-=======
-        if (currentUserDB != null) {
-
-            ResRoleDTO role = new ResRoleDTO(currentUserDB.getRole().getName(), currentUserDB.getRole().getDecription());
-            ResLoginDTO.UserLogin userLogin = new ResLoginDTO.UserLogin(
-                    currentUserDB.getId(),
-                    currentUserDB.getEmail(),
-                    currentUserDB.getFullName(),
-                    role);
-            resLoginDTO.setUser(userLogin);
-        }
->>>>>>> f4b3851583e6f81662849e37f18856b9cedbe2cf
 
         //create token
         String access_token = this.securityUtil.createAccessToken(authentication.getName(), resLoginDTO);
@@ -128,14 +89,9 @@ public class AuthController {
         ResponseCookie resCookies = ResponseCookie
                 .from("refresh_token", refresh_token)
                 .httpOnly(true)
-<<<<<<< HEAD
                 .secure(secureCookie)
                 .path("/")
                 .sameSite("Lax")
-=======
-                .secure(true)
-                .path("/")
->>>>>>> f4b3851583e6f81662849e37f18856b9cedbe2cf
                 .maxAge(refreshTokenExpiration)
                 .build();
 
@@ -144,7 +100,6 @@ public class AuthController {
                 .body(resLoginDTO);
     }
 
-<<<<<<< HEAD
     @PostMapping("/auth/google")
     public ResponseEntity<ResLoginDTO> login(@RequestBody ReqGoogleLoginDTO reqGoogleLoginDTO)throws Exception {
 
@@ -202,8 +157,6 @@ public class AuthController {
         return ResponseEntity.status(HttpStatus.CREATED).body(this.userService.register(registerDTO));
     }
 
-=======
->>>>>>> f4b3851583e6f81662849e37f18856b9cedbe2cf
     @GetMapping("/auth/account")
     @ApiMessage("fetch account")
     public ResponseEntity<ResLoginDTO.UserGetAccount> getAccount(){
@@ -214,11 +167,7 @@ public class AuthController {
         ResLoginDTO resLoginDTO = new ResLoginDTO();
         ResLoginDTO.UserGetAccount userGetAccount = new ResLoginDTO.UserGetAccount();
         if (currentUserDB != null) {
-<<<<<<< HEAD
             ResRoleDTO role = this.convertToRoleDTO(currentUserDB);
-=======
-            ResRoleDTO role = new ResRoleDTO(currentUserDB.getRole().getName(), currentUserDB.getRole().getDecription());
->>>>>>> f4b3851583e6f81662849e37f18856b9cedbe2cf
             ResLoginDTO.UserLogin userLogin = new ResLoginDTO.UserLogin(
                     currentUserDB.getId(),
                     currentUserDB.getEmail(),
@@ -253,11 +202,7 @@ public class AuthController {
         ResLoginDTO res = new ResLoginDTO();
         User currentUserDB = this.userService.getUserByUsername(email);
         if (currentUserDB != null) {
-<<<<<<< HEAD
             ResRoleDTO role = this.convertToRoleDTO(currentUserDB);
-=======
-            ResRoleDTO role = new ResRoleDTO(currentUserDB.getRole().getName(), currentUserDB.getRole().getDecription());
->>>>>>> f4b3851583e6f81662849e37f18856b9cedbe2cf
 
             ResLoginDTO.UserLogin userLogin = new ResLoginDTO.UserLogin(
                     currentUserDB.getId(),
@@ -281,14 +226,9 @@ public class AuthController {
         ResponseCookie resCookies = ResponseCookie
                 .from("refresh_token", new_refresh_token)
                 .httpOnly(true)
-<<<<<<< HEAD
                 .secure(secureCookie)
                 .path("/")
                 .sameSite("Lax")
-=======
-                .secure(true)
-                .path("/")
->>>>>>> f4b3851583e6f81662849e37f18856b9cedbe2cf
                 .maxAge(refreshTokenExpiration)
                 .build();
 
@@ -313,14 +253,9 @@ public class AuthController {
         ResponseCookie deleteSpringCookie = ResponseCookie
                 .from("refresh_token", null)
                 .httpOnly(true)
-<<<<<<< HEAD
                 .secure(secureCookie)
                 .path("/")
                 .sameSite("Lax")
-=======
-                .secure(true)
-                .path("/")
->>>>>>> f4b3851583e6f81662849e37f18856b9cedbe2cf
                 .maxAge(0)
                 .build();
 
@@ -328,7 +263,6 @@ public class AuthController {
                 .header(HttpHeaders.SET_COOKIE, deleteSpringCookie.toString())
                 .body(null);
     }
-<<<<<<< HEAD
 
     private ResRoleDTO convertToRoleDTO(User user) {
         if (user.getRole() == null) {
@@ -336,6 +270,4 @@ public class AuthController {
         }
         return new ResRoleDTO(user.getRole().getName(), user.getRole().getDecription());
     }
-=======
->>>>>>> f4b3851583e6f81662849e37f18856b9cedbe2cf
 }

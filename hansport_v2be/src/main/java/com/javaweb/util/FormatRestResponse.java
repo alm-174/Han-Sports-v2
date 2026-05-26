@@ -4,10 +4,7 @@ import com.javaweb.domain.response.RestResponse;
 import com.javaweb.util.annotation.ApiMessage;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.core.MethodParameter;
-<<<<<<< HEAD
 import org.springframework.core.io.Resource;
-=======
->>>>>>> f4b3851583e6f81662849e37f18856b9cedbe2cf
 import org.springframework.http.MediaType;
 import org.springframework.http.server.ServerHttpRequest;
 import org.springframework.http.server.ServerHttpResponse;
@@ -33,13 +30,10 @@ public class FormatRestResponse implements ResponseBodyAdvice {
         HttpServletResponse httpServletResponse = ((ServletServerHttpResponse) response).getServletResponse();
         int status = httpServletResponse.getStatus();
 
-<<<<<<< HEAD
         if (body instanceof RestResponse<?> || body instanceof Resource ||
                 (selectedContentType != null && !MediaType.APPLICATION_JSON.includes(selectedContentType))) {
             return body;
         }
-=======
->>>>>>> f4b3851583e6f81662849e37f18856b9cedbe2cf
 
         RestResponse<Object> res = new RestResponse<>();
         res.setStatusCode(status);

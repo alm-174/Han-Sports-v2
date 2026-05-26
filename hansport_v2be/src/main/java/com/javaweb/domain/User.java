@@ -2,10 +2,6 @@ package com.javaweb.domain;
 
 
 import com.javaweb.util.SecurityUtil;
-<<<<<<< HEAD
-=======
-import com.javaweb.util.validator.StrongPassword;
->>>>>>> f4b3851583e6f81662849e37f18856b9cedbe2cf
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
@@ -26,17 +22,9 @@ public class User {
 
     @NotNull
     @Email(message = "Email không hợp lệ", regexp = "^[a-zA-Z0-9_!#$%&'*+/=?`{|}~^.-]+@[a-zA-Z0-9.-]+$")
-<<<<<<< HEAD
     @Column(nullable = false, unique = true)
     private String email;
 
-=======
-    private String email;
-
-    @NotNull
-//    @Size(min = 2, message = "Password phải có tối thiểu 2 ký tự")
-    @StrongPassword
->>>>>>> f4b3851583e6f81662849e37f18856b9cedbe2cf
     private String password;
 
     @NotNull

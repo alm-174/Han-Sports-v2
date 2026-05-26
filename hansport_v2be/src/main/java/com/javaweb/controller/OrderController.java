@@ -1,13 +1,8 @@
 package com.javaweb.controller;
 
 import com.javaweb.domain.Order;
-<<<<<<< HEAD
 import com.javaweb.domain.request.ReqOrderDTO;
 import com.javaweb.domain.request.ReqUpdateOrderStatusDTO;
-=======
-import com.javaweb.domain.User;
-import com.javaweb.domain.request.ReqOrderDTO;
->>>>>>> f4b3851583e6f81662849e37f18856b9cedbe2cf
 import com.javaweb.domain.response.ResultPaginationDTO;
 import com.javaweb.domain.response.order.ResOrderDTO;
 import com.javaweb.service.OrderService;
@@ -30,11 +25,7 @@ public class OrderController {
     }
 
     @PostMapping("/orders")
-<<<<<<< HEAD
     public ResponseEntity<ResOrderDTO> placeOrder(@RequestBody @Valid ReqOrderDTO redOrderDTO) throws com.javaweb.util.error.IdInvalidException {
-=======
-    public ResponseEntity<ResOrderDTO> placeOrder(@RequestBody @Valid ReqOrderDTO redOrderDTO) {
->>>>>>> f4b3851583e6f81662849e37f18856b9cedbe2cf
         String email = SecurityUtil.getCurrentUserLogin().isPresent() ?
                 SecurityUtil.getCurrentUserLogin().get() : "";
 
@@ -43,15 +34,9 @@ public class OrderController {
     }
 
     @PutMapping("/orders")
-<<<<<<< HEAD
     public ResponseEntity<ResOrderDTO> updateOrder(@RequestBody @Valid ReqUpdateOrderStatusDTO order) throws com.javaweb.util.error.IdInvalidException
     {
         return ResponseEntity.ok().body(this.orderService.updateOrderStatus(order));
-=======
-    public ResponseEntity<Void> updateOrder(@RequestBody Order order)
-    {
-        return ResponseEntity.ok().body(null);
->>>>>>> f4b3851583e6f81662849e37f18856b9cedbe2cf
     }
 
     @GetMapping("/orders")
@@ -61,7 +46,6 @@ public class OrderController {
         return ResponseEntity.status(HttpStatus.OK).body(this.orderService.fetchAllOrders(spec, pageable));
     }
 
-<<<<<<< HEAD
     @GetMapping("/orders/my")
     public ResponseEntity<ResultPaginationDTO> getMyOrders(Pageable pageable) throws com.javaweb.util.error.IdInvalidException
     {
@@ -72,10 +56,6 @@ public class OrderController {
 
     @DeleteMapping("/orders/{id}")
     public ResponseEntity<Void> deleteOrder(@PathVariable long id) throws com.javaweb.util.error.IdInvalidException {
-=======
-    @DeleteMapping("/orders/{id}")
-    public ResponseEntity<Void> deleteOrder(@PathVariable long id){
->>>>>>> f4b3851583e6f81662849e37f18856b9cedbe2cf
         String email = SecurityUtil.getCurrentUserLogin().isPresent() ?
                 SecurityUtil.getCurrentUserLogin().get() : "";
         this.orderService.deleteOrder(email, id);

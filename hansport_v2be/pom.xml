@@ -42,15 +42,12 @@
         </dependency>
 
         <dependency>
-<<<<<<< HEAD
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
             <scope>test</scope>
         </dependency>
 
         <dependency>
-=======
->>>>>>> f4b3851583e6f81662849e37f18856b9cedbe2cf
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
@@ -139,7 +136,6 @@
             <version>3.1.2</version>
         </dependency>
 
-<<<<<<< HEAD
         <dependency>
             <groupId>com.google.api-client</groupId>
             <artifactId>google-api-client</artifactId>
@@ -168,8 +164,6 @@
             <artifactId>spring-dotenv</artifactId>
             <version>4.0.0</version>
         </dependency>
-=======
->>>>>>> f4b3851583e6f81662849e37f18856b9cedbe2cf
 
     </dependencies>
 

@@ -10,11 +10,8 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.Instant;
-<<<<<<< HEAD
 import java.util.ArrayList;
 import java.util.List;
-=======
->>>>>>> f4b3851583e6f81662849e37f18856b9cedbe2cf
 
 @Entity
 @Table(name = "products")
@@ -43,22 +40,15 @@ public class Product {
     private String shortDesc;
 
     @NotNull
-<<<<<<< HEAD
     @Min(value = 0, message = "Số lượng không được âm")
-=======
-    @Min(value = 1, message = "Số lượng cần lớn hơn hoặc bằng 1")
->>>>>>> f4b3851583e6f81662849e37f18856b9cedbe2cf
     private long quantity;
     private long sold;
     private String brand;
     private String target;
-<<<<<<< HEAD
     private String category;
 
     @OneToMany(mappedBy = "product", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ProductImage> images;
-=======
->>>>>>> f4b3851583e6f81662849e37f18856b9cedbe2cf
 
     private Instant createdAt;
 
@@ -82,8 +72,4 @@ public class Product {
         this.updatedBy = SecurityUtil.getCurrentUserLogin().isPresent() ?
                 SecurityUtil.getCurrentUserLogin().get() : "";
     }
-<<<<<<< HEAD
 }
-=======
-}
->>>>>>> f4b3851583e6f81662849e37f18856b9cedbe2cf

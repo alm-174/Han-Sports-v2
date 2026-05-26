@@ -14,17 +14,13 @@ import java.util.List;
 @Configuration
 public class CorsConfig {
 
-<<<<<<< HEAD
     @Value("${app.frontend.url:http://localhost:5173}")
     private String frontendUrl;
-=======
->>>>>>> f4b3851583e6f81662849e37f18856b9cedbe2cf
 
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
 
-<<<<<<< HEAD
         List<String> allowedOriginPatterns = new ArrayList<>(Arrays.asList(
                 frontendUrl,
                 "http://localhost:*",
@@ -33,17 +29,6 @@ public class CorsConfig {
         configuration.setAllowedOriginPatterns(allowedOriginPatterns);
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type", "Accept", "x-no-retry", "Cookie"));
-=======
-        List<String> allowedOrigins = new ArrayList<>(Arrays.asList(
-                "http://localhost:3000",
-                "http://localhost:4173",
-                "http://localhost:5173"));
-
-        configuration.setAllowedOrigins(allowedOrigins);
-        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-        configuration
-                .setAllowedHeaders(Arrays.asList("Authorization", "Content-Type", "Accept", "x-no-retry", "Cookie"));
->>>>>>> f4b3851583e6f81662849e37f18856b9cedbe2cf
         configuration.setExposedHeaders(Arrays.asList("Set-Cookie", "Authorization"));
         configuration.setAllowCredentials(true);
         configuration.setMaxAge(3600L);

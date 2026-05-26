@@ -33,11 +33,7 @@ public class Order {
     @JsonIgnore
     private User user;
 
-<<<<<<< HEAD
     @OneToMany(mappedBy = "order", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-=======
-    @OneToMany(mappedBy = "order", fetch = FetchType.LAZY)
->>>>>>> f4b3851583e6f81662849e37f18856b9cedbe2cf
     private List<OrderDetail> orderDetails;
 
     private Instant createdAt;

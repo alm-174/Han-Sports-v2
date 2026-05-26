@@ -1,6 +1,5 @@
 package com.javaweb;
 
-<<<<<<< HEAD
 import com.javaweb.repository.ProductRepository;
 import com.javaweb.repository.RoleRepository;
 import com.javaweb.repository.UserRepository;
@@ -36,16 +35,6 @@ class HansportApplicationTests {
 		Assertions.assertTrue(roleRepository.existsByName("USER"));
 		Assertions.assertTrue(userRepository.existsByEmail("admin@hansport.local"));
 		Assertions.assertTrue(productRepository.existsByName("Giày đá bóng 11Play Pro"));
-=======
-import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
-
-@SpringBootTest
-class HansportApplicationTests {
-
-	@Test
-	void contextLoads() {
->>>>>>> f4b3851583e6f81662849e37f18856b9cedbe2cf
 	}
 
 }

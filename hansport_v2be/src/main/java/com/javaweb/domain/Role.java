@@ -21,10 +21,7 @@ public class Role {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
-<<<<<<< HEAD
     @Column(nullable = false, unique = true)
-=======
->>>>>>> f4b3851583e6f81662849e37f18856b9cedbe2cf
     private String name;
     private String decription;
 

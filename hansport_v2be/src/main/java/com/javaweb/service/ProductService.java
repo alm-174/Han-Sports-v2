@@ -1,35 +1,22 @@
 package com.javaweb.service;
 
 import com.javaweb.domain.Product;
-<<<<<<< HEAD
 import com.javaweb.domain.ProductImage;
 import com.javaweb.domain.request.ReqProductDTO;
-=======
-import com.javaweb.domain.User;
->>>>>>> f4b3851583e6f81662849e37f18856b9cedbe2cf
 import com.javaweb.domain.response.ResultPaginationDTO;
 import com.javaweb.domain.response.product.ResCreateProductDTO;
 import com.javaweb.domain.response.product.ResProductDTO;
 import com.javaweb.domain.response.product.ResUpdateProductDTO;
-<<<<<<< HEAD
 import com.javaweb.repository.ProductImageRepository;
 import com.javaweb.repository.ProductRepository;
 import com.javaweb.util.error.IdInvalidException;
-=======
-import com.javaweb.domain.response.user.ResUserDTO;
-import com.javaweb.repository.ProductRepository;
->>>>>>> f4b3851583e6f81662849e37f18856b9cedbe2cf
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
-<<<<<<< HEAD
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
-=======
-
->>>>>>> f4b3851583e6f81662849e37f18856b9cedbe2cf
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -37,7 +24,6 @@ import java.util.stream.Collectors;
 @Service
 public class ProductService {
     private final ProductRepository productRepository;
-<<<<<<< HEAD
     private final ProductImageRepository productImageRepository;
     public ProductService(ProductRepository productRepository, ProductImageRepository productImageRepository) {
         this.productRepository = productRepository;
@@ -85,42 +71,6 @@ public class ProductService {
         for (ProductImage productImage : productImages) {
             this.productImageRepository.delete(productImage);
         }
-=======
-    public ProductService(ProductRepository productRepository) {
-        this.productRepository = productRepository;
-    }
-
-    public ResCreateProductDTO handleSaveProduct(Product product) {
-        Product currentProduct = this.productRepository.save(product);
-        return this.convertToResCreateProductDTO(currentProduct);
-    }
-
-    public ResUpdateProductDTO handleUpdateProduct(Product product) {
-        Optional<Product> optionalPr = this.productRepository.findById(product.getId());
-        if (optionalPr.isPresent()) {
-            Product currentProduct = optionalPr.get();
-            currentProduct.setName(product.getName());
-            currentProduct.setPrice(product.getPrice());
-            currentProduct.setShortDesc(product.getShortDesc());
-            currentProduct.setDetailDesc(product.getDetailDesc());
-            currentProduct.setBrand(product.getBrand());
-            currentProduct.setTarget(product.getTarget());
-            currentProduct.setQuantity(product.getQuantity());
-            this.productRepository.save(currentProduct);
-            return convertToResUpdateProductDTO(currentProduct);
-        }
-        return null;
-    }
-    public ResProductDTO fetchProductById(long id) {
-        Optional<Product> optionalPr = this.productRepository.findById(id);
-        if(optionalPr.isPresent()) {
-            return convertToResProductDTO(optionalPr.get());
-        }
-        return null;
-    }
-
-    public void deleteProductById(long id) {
->>>>>>> f4b3851583e6f81662849e37f18856b9cedbe2cf
         this.productRepository.deleteById(id);
     }
 
@@ -152,7 +102,6 @@ public class ProductService {
         return this.productRepository.existsById(id);
     }
 
-<<<<<<< HEAD
     private void applyProductRequest(Product product, ReqProductDTO req) {
         product.setName(req.getName());
         product.setPrice(req.getPrice());
@@ -177,8 +126,6 @@ public class ProductService {
         }
         return imageList;   }
 
-=======
->>>>>>> f4b3851583e6f81662849e37f18856b9cedbe2cf
     public ResCreateProductDTO convertToResCreateProductDTO(Product product) {
         ResCreateProductDTO resCreateProductDTO = new ResCreateProductDTO();
         resCreateProductDTO.setId(product.getId());
@@ -189,7 +136,6 @@ public class ProductService {
         resCreateProductDTO.setQuantity(product.getQuantity());
         resCreateProductDTO.setSold(product.getSold());
         resCreateProductDTO.setTarget(product.getTarget());
-<<<<<<< HEAD
         resCreateProductDTO.setCategory(product.getCategory());
         resCreateProductDTO.setBrand(product.getBrand());
 
@@ -199,9 +145,6 @@ public class ProductService {
             images.add(productImage.getImageUrl());
         }
         resCreateProductDTO.setImages(images);
-=======
-        resCreateProductDTO.setBrand(product.getBrand());
->>>>>>> f4b3851583e6f81662849e37f18856b9cedbe2cf
         resCreateProductDTO.setCreatedAt(product.getCreatedAt());
         return resCreateProductDTO;
     }
@@ -216,7 +159,6 @@ public class ProductService {
         resUpdateProductDTO.setQuantity(product.getQuantity());
         resUpdateProductDTO.setSold(product.getSold());
         resUpdateProductDTO.setTarget(product.getTarget());
-<<<<<<< HEAD
         resUpdateProductDTO.setCategory(product.getCategory());
         resUpdateProductDTO.setBrand(product.getBrand());
 
@@ -226,9 +168,6 @@ public class ProductService {
             images.add(productImage.getImageUrl());
         }
         resUpdateProductDTO.setImages(images);
-=======
-        resUpdateProductDTO.setBrand(product.getBrand());
->>>>>>> f4b3851583e6f81662849e37f18856b9cedbe2cf
         resUpdateProductDTO.setUpdatedAt(product.getUpdatedAt());
         return resUpdateProductDTO;
     }
@@ -243,7 +182,6 @@ public class ProductService {
         resProductDTO.setQuantity(product.getQuantity());
         resProductDTO.setSold(product.getSold());
         resProductDTO.setTarget(product.getTarget());
-<<<<<<< HEAD
         resProductDTO.setCategory(product.getCategory());
         resProductDTO.setBrand(product.getBrand());
 
@@ -253,9 +191,6 @@ public class ProductService {
             images.add(productImage.getImageUrl());
         }
         resProductDTO.setImages(images);
-=======
-        resProductDTO.setBrand(product.getBrand());
->>>>>>> f4b3851583e6f81662849e37f18856b9cedbe2cf
         resProductDTO.setCreatedAt(product.getCreatedAt());
         resProductDTO.setUpdatedAt(product.getUpdatedAt());
         return resProductDTO;

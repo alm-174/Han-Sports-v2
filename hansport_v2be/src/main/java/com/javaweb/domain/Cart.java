@@ -29,11 +29,7 @@ public class Cart {
     private User user;
 
     // cart_detail_id
-<<<<<<< HEAD
     @OneToMany(mappedBy = "cart", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-=======
-    @OneToMany(mappedBy = "cart", fetch = FetchType.LAZY)
->>>>>>> f4b3851583e6f81662849e37f18856b9cedbe2cf
     List<CartDetail> cartDetails;
 
     private Instant createdAt;

@@ -33,9 +33,6 @@ public class ResOrderDetailDTO {
     public static class ProductOrderDetail {
         private long id;
         private String name;
-<<<<<<< HEAD
         private String image;
-=======
->>>>>>> f4b3851583e6f81662849e37f18856b9cedbe2cf
     }
 }

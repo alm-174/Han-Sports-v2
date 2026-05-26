@@ -6,10 +6,7 @@ import com.nimbusds.jose.util.Base64;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-<<<<<<< HEAD
 import org.springframework.http.HttpMethod;
-=======
->>>>>>> f4b3851583e6f81662849e37f18856b9cedbe2cf
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -49,7 +46,6 @@ public class SecurityConfiguration {
                 .cors(Customizer.withDefaults())
                 .authorizeHttpRequests(
                         authz -> authz
-<<<<<<< HEAD
                                 .requestMatchers("/", "/api/v1/auth/login", "/api/v1/auth/register",
                                         "/api/v1/auth/refresh", "/storage/**", "/api/v1/auth/google").permitAll()
                                 .requestMatchers(HttpMethod.GET, "/api/v1/products", "/api/v1/products/**", "/api/v1/files", "/api/v1/settings").permitAll()
@@ -66,14 +62,6 @@ public class SecurityConfiguration {
 //                .oauth2Login(oauth2 -> oauth2
 //                        .successHandler(oAuth2LoginSuccessHandler)
 //                )
-=======
-                                .requestMatchers("/", "/api/v1/auth/login",
-                                        "/api/v1/auth/refresh", "/storage/**").permitAll()
-                                .anyRequest().authenticated())
-                .oauth2ResourceServer((oauth2) -> oauth2.jwt(Customizer.withDefaults())
-                        .authenticationEntryPoint(customAuthenticationEntryPoint))
-
->>>>>>> f4b3851583e6f81662849e37f18856b9cedbe2cf
                 .formLogin(f -> f.disable())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
@@ -84,11 +72,7 @@ public class SecurityConfiguration {
     public JwtAuthenticationConverter jwtAuthenticationConverter() {
         JwtGrantedAuthoritiesConverter grantedAuthoritiesConverter = new JwtGrantedAuthoritiesConverter();
         grantedAuthoritiesConverter.setAuthorityPrefix("");
-<<<<<<< HEAD
         grantedAuthoritiesConverter.setAuthoritiesClaimName("roles");
-=======
-        grantedAuthoritiesConverter.setAuthoritiesClaimName("user");
->>>>>>> f4b3851583e6f81662849e37f18856b9cedbe2cf
         JwtAuthenticationConverter jwtAuthenticationConverter = new JwtAuthenticationConverter();
 
         jwtAuthenticationConverter.setJwtGrantedAuthoritiesConverter(grantedAuthoritiesConverter);
@@ -97,21 +81,8 @@ public class SecurityConfiguration {
 
     @Bean
     public JwtDecoder jwtDecoder() {
-<<<<<<< HEAD
         return NimbusJwtDecoder.withSecretKey(
                 getSecretKey()).macAlgorithm(SecurityUtil.JWT_ALGORITHM).build();
-=======
-        NimbusJwtDecoder jwtDecoder = NimbusJwtDecoder.withSecretKey(
-                getSecretKey()).macAlgorithm(SecurityUtil.JWT_ALGORITHM).build();
-        return token -> {
-            try {
-                return jwtDecoder.decode(token);
-            } catch (Exception e) {
-                System.out.println(">>> JWT error: " + e.getMessage());
-                throw e;
-            }
-        };
->>>>>>> f4b3851583e6f81662849e37f18856b9cedbe2cf
     }
 
     @Bean

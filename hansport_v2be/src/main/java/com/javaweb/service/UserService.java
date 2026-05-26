@@ -1,20 +1,15 @@
 package com.javaweb.service;
 
-<<<<<<< HEAD
 import com.javaweb.domain.Role;
 import com.javaweb.domain.User;
 import com.javaweb.domain.request.ReqRegisterDTO;
 import com.javaweb.domain.request.ReqUserCreateDTO;
 import com.javaweb.domain.request.ReqUserUpdateDTO;
-=======
-import com.javaweb.domain.User;
->>>>>>> f4b3851583e6f81662849e37f18856b9cedbe2cf
 import com.javaweb.domain.response.ResultPaginationDTO;
 import com.javaweb.domain.response.role.ResRoleDTO;
 import com.javaweb.domain.response.user.ResCreateUserDTO;
 import com.javaweb.domain.response.user.ResUpdateUserDTO;
 import com.javaweb.domain.response.user.ResUserDTO;
-<<<<<<< HEAD
 import com.javaweb.repository.RoleRepository;
 import com.javaweb.repository.UserRepository;
 import com.javaweb.util.error.IdInvalidException;
@@ -27,22 +22,12 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Locale;
-=======
-import com.javaweb.repository.UserRepository;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.domain.Specification;
-import org.springframework.stereotype.Service;
-
-import java.util.List;
->>>>>>> f4b3851583e6f81662849e37f18856b9cedbe2cf
 import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
 public class UserService {
     private final UserRepository userRepository;
-<<<<<<< HEAD
     private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
 
@@ -50,10 +35,6 @@ public class UserService {
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
         this.passwordEncoder = passwordEncoder;
-=======
-    public UserService(UserRepository userRepository) {
-        this.userRepository = userRepository;
->>>>>>> f4b3851583e6f81662849e37f18856b9cedbe2cf
     }
 
     public boolean isEmailExists(String email)
@@ -66,7 +47,6 @@ public class UserService {
         return this.userRepository.existsById(id);
     }
 
-<<<<<<< HEAD
     @Transactional
     public ResCreateUserDTO createUser(ReqUserCreateDTO req) throws IdInvalidException {
         if (this.userRepository.existsByEmail(req.getEmail())) {
@@ -133,47 +113,6 @@ public class UserService {
     }
 
     @Transactional
-=======
-    public ResCreateUserDTO createUser(User user){
-        User currentUser = this.userRepository.save(user);
-        ResCreateUserDTO  resCreateUserDTO = new ResCreateUserDTO();
-        resCreateUserDTO.setId(currentUser.getId());
-        resCreateUserDTO.setEmail(currentUser.getEmail());
-        resCreateUserDTO.setFullName(currentUser.getFullName());
-        resCreateUserDTO.setAddress(currentUser.getAddress());
-        resCreateUserDTO.setPhone(currentUser.getPhone());
-        resCreateUserDTO.setCreatedAt(currentUser.getCreatedAt());
-        ResRoleDTO role = new ResRoleDTO(currentUser.getRole().getName(), currentUser.getRole().getDecription());
-        resCreateUserDTO.setRole(role);
-        return resCreateUserDTO;
-    }
-
-    public ResUpdateUserDTO updateUser(User user){
-        Optional<User> optionalUser = this.userRepository.findById(user.getId());
-        if(optionalUser.isPresent()){
-            User currentUser = optionalUser.get();
-            currentUser.setEmail(user.getEmail());
-            currentUser.setFullName(user.getFullName());
-            currentUser.setPhone(user.getPhone());
-            currentUser.setAddress(user.getAddress());
-            User updateUser = this.userRepository.save(currentUser);
-
-            //DTO
-            ResUpdateUserDTO resUpdateUserDTO = new ResUpdateUserDTO();
-            resUpdateUserDTO.setId(updateUser.getId());
-            resUpdateUserDTO.setEmail(updateUser.getEmail());
-            resUpdateUserDTO.setFullName(updateUser.getFullName());
-            resUpdateUserDTO.setAddress(updateUser.getAddress());
-            resUpdateUserDTO.setPhone(updateUser.getPhone());
-            resUpdateUserDTO.setUpdatedAt(updateUser.getUpdatedAt());
-            ResRoleDTO role = new ResRoleDTO(updateUser.getRole().getName(), updateUser.getRole().getDecription());
-            resUpdateUserDTO.setRole(role);
-            return resUpdateUserDTO;
-        }
-        return null;
-    }
-
->>>>>>> f4b3851583e6f81662849e37f18856b9cedbe2cf
     public void deleteUserById(long id){
         this.userRepository.deleteById(id);
     }
@@ -203,23 +142,10 @@ public class UserService {
         return resultPaginationDTO;
     }
 
-<<<<<<< HEAD
     public ResUserDTO getuserById(long id) throws IdInvalidException {
         User currentUser = this.userRepository.findById(id)
                 .orElseThrow(() -> new IdInvalidException("User không tồn tại"));
         return this.convertToResUserDTO(currentUser);
-=======
-    public ResUserDTO getuserById(long id){
-        Optional<User> optionalUser = this.userRepository.findById(id);
-        if(optionalUser.isPresent()){
-            User currentUser = optionalUser.get();
-
-            //DTO
-            ResUserDTO resUserDTO = this.convertToResUserDTO(currentUser);
-            return resUserDTO;
-        }
-        return null;
->>>>>>> f4b3851583e6f81662849e37f18856b9cedbe2cf
     }
 
     public User getUserByUsername(String username){
@@ -243,7 +169,6 @@ public class UserService {
         return this.userRepository.findByRefreshTokenAndEmail(token, email);
     }
 
-<<<<<<< HEAD
     private Role getRoleOrThrow(String roleName) throws IdInvalidException {
         return this.roleRepository.findByName(roleName)
                 .orElseThrow(() -> new IdInvalidException("Role không tồn tại: " + roleName));
@@ -289,8 +214,6 @@ public class UserService {
         return new ResRoleDTO(role.getName(), role.getDecription());
     }
 
-=======
->>>>>>> f4b3851583e6f81662849e37f18856b9cedbe2cf
     public ResUserDTO convertToResUserDTO(User user){
         ResUserDTO resUserDTO = new ResUserDTO();
         resUserDTO.setId(user.getId());
@@ -300,12 +223,7 @@ public class UserService {
         resUserDTO.setPhone(user.getPhone());
         resUserDTO.setCreatedAt(user.getCreatedAt());
         resUserDTO.setUpdatedAt(user.getUpdatedAt());
-<<<<<<< HEAD
         resUserDTO.setRole(this.convertToResRoleDTO(user.getRole()));
-=======
-        ResRoleDTO role = new ResRoleDTO(user.getRole().getName(), user.getRole().getDecription());
-        resUserDTO.setRole(role);
->>>>>>> f4b3851583e6f81662849e37f18856b9cedbe2cf
         return resUserDTO;
     }
 
