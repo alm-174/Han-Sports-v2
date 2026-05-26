@@ -1,0 +1,23 @@
+package com.javaweb.domain.response.user;
+
+import com.javaweb.domain.response.role.ResRoleDTO;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+import java.time.Instant;
+
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
+public class ResUpdateUserDTO {
+    private long id;
+    private String email;
+    private String fullName;
+    private String address;
+    private String phone;
+    private ResRoleDTO role;
+    private Instant updatedAt;
+}
