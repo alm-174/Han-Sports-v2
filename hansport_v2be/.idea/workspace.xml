@@ -5,51 +5,13 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="12cc9a11-261f-47f1-a17b-c8939459500b" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/compiler.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/javaweb/config/CorsConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/javaweb/config/CorsConfig.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/javaweb/config/SecurityConfiguration.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/javaweb/config/SecurityConfiguration.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/javaweb/config/StaticResourcesWebConfiguration.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/javaweb/config/StaticResourcesWebConfiguration.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/javaweb/config/UserDetailsCustom.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/javaweb/config/UserDetailsCustom.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/javaweb/controller/AuthController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/javaweb/controller/AuthController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/javaweb/controller/CartController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/javaweb/controller/CartController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/javaweb/controller/FileController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/javaweb/controller/FileController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/javaweb/controller/OrderController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/javaweb/controller/OrderController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/javaweb/controller/ProductController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/javaweb/controller/ProductController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/javaweb/controller/UserController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/javaweb/controller/UserController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/javaweb/domain/Cart.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/javaweb/domain/Cart.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/javaweb/domain/Order.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/javaweb/domain/Order.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/javaweb/domain/Product.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/javaweb/domain/Product.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/javaweb/domain/Role.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/javaweb/domain/Role.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/javaweb/domain/User.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/javaweb/domain/User.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/javaweb/domain/request/ReqAddProductToCartDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/javaweb/domain/request/ReqAddProductToCartDTO.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/javaweb/domain/request/ReqLoginDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/javaweb/domain/request/ReqLoginDTO.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/javaweb/domain/request/ReqOrderDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/javaweb/domain/request/ReqOrderDTO.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/javaweb/domain/response/cartdetail/ResCartDetailDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/javaweb/domain/response/cartdetail/ResCartDetailDTO.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/javaweb/domain/response/file/ResUploadFileDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/javaweb/domain/response/file/ResUploadFileDTO.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/javaweb/domain/response/orderdetail/ResOrderDetailDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/javaweb/domain/response/orderdetail/ResOrderDetailDTO.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/javaweb/domain/response/product/ResCreateProductDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/javaweb/domain/response/product/ResCreateProductDTO.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/javaweb/domain/response/product/ResProductDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/javaweb/domain/response/product/ResProductDTO.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/javaweb/domain/response/product/ResUpdateProductDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/javaweb/domain/response/product/ResUpdateProductDTO.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/javaweb/repository/OrderRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/javaweb/repository/OrderRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/javaweb/repository/ProductRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/javaweb/repository/ProductRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/javaweb/service/CartService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/javaweb/service/CartService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/javaweb/service/FileService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/javaweb/service/FileService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/javaweb/service/OrderService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/javaweb/service/OrderService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/javaweb/service/ProductService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/javaweb/service/ProductService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/javaweb/service/UserService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/javaweb/service/UserService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/javaweb/util/FormatRestResponse.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/javaweb/util/FormatRestResponse.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/javaweb/util/SecurityUtil.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/javaweb/util/SecurityUtil.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/javaweb/util/error/GlobalException.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/javaweb/util/error/GlobalException.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/javaweb/util/validator/StrongPasswordValidator.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/javaweb/util/validator/StrongPasswordValidator.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/javaweb/config/DataSeeder.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/javaweb/config/DataSeeder.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/javaweb/controller/EmailController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/javaweb/controller/EmailController.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/application.properties" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/com/javaweb/HansportApplicationTests.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/com/javaweb/HansportApplicationTests.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../hansport_v2fe/.env" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../hansport_v2fe/upload/hoidanit.pdf" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../hansport_v2fe/upload/hoidanit.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../hansport_v2fe/upload/hoidanit.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../hansport_v2fe/src/api/productApi.js" beforeDir="false" afterPath="$PROJECT_DIR$/../hansport_v2fe/src/api/productApi.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../hansport_v2fe/src/pages/admin/ProductsPage.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../hansport_v2fe/src/pages/admin/ProductsPage.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../hansport_v2fe/src/pages/client/CheckoutPage.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../hansport_v2fe/src/pages/client/CheckoutPage.jsx" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -68,29 +30,29 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "Application.HansportApplication.executor": "Run",
-    "ModuleVcsDetector.initialDetectionPerformed": "true",
-    "RequestMappingsPanelOrder0": "0",
-    "RequestMappingsPanelOrder1": "1",
-    "RequestMappingsPanelWidth0": "75",
-    "RequestMappingsPanelWidth1": "75",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "RunOnceActivity.typescript.service.memoryLimit.init": "true",
-    "Spring Boot.HansportApplication.executor": "Run",
-    "codeWithMe.voiceChat.enabledByDefault": "false",
-    "git-widget-placeholder": "main",
-    "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "D:/hansport_v2/hansport_v2be",
-    "project.structure.last.edited": "Libraries",
-    "project.structure.proportion": "0.15",
-    "project.structure.side.proportion": "0.2",
-    "settings.editor.selected.configurable": "reference.projectsettings.compiler.javacompiler",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;Application.HansportApplication.executor&quot;: &quot;Run&quot;,
+    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
+    &quot;RequestMappingsPanelOrder0&quot;: &quot;0&quot;,
+    &quot;RequestMappingsPanelOrder1&quot;: &quot;1&quot;,
+    &quot;RequestMappingsPanelWidth0&quot;: &quot;75&quot;,
+    &quot;RequestMappingsPanelWidth1&quot;: &quot;75&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.typescript.service.memoryLimit.init&quot;: &quot;true&quot;,
+    &quot;Spring Boot.HansportApplication.executor&quot;: &quot;Run&quot;,
+    &quot;codeWithMe.voiceChat.enabledByDefault&quot;: &quot;false&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;D:/hansport_v2/hansport_v2be&quot;,
+    &quot;project.structure.last.edited&quot;: &quot;Libraries&quot;,
+    &quot;project.structure.proportion&quot;: &quot;0.15&quot;,
+    &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.general&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="RunManager" selected="Spring Boot.HansportApplication">
     <configuration name="HansportApplication" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="com.javaweb.HansportApplication" />
@@ -138,6 +100,12 @@
       <workItem from="1779768655210" duration="463000" />
       <workItem from="1779789500452" duration="224000" />
       <workItem from="1779789745800" duration="799000" />
+      <workItem from="1780541451731" duration="1408000" />
+      <workItem from="1780633495380" duration="1642000" />
+      <workItem from="1780636040016" duration="5000" />
+      <workItem from="1780636070220" duration="75000" />
+      <workItem from="1780636208481" duration="1341000" />
+      <workItem from="1780660728746" duration="1326000" />
     </task>
     <servers />
   </component>

@@ -16,23 +16,42 @@ export const productApi = {
   remove: (id) =>
     axiosInstance.delete(`/api/v1/products/${id}`),
 
-  uploadFile: (file) => {
+  uploadFile: (file, folder = "product") => {
     const formData = new FormData();
+
     formData.append("files", file);
-    formData.append("folder", "product");
-    return axiosInstance.post("/api/v1/files", formData);
+
+    return axiosInstance.post(
+      `/api/v1/files?folder=${encodeURIComponent(folder)}`,
+      formData,
+      {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      }
+    );
   },
 
-  uploadFiles: (files) => {
+  uploadFiles: (files, folder = "product") => {
     const formData = new FormData();
 
-    files.forEach((f) => formData.append("files", f));
+    files.forEach((file) => {
+      formData.append("files", file);
+    });
 
-    formData.append("folder", "product");
-
-    return axiosInstance.post("/api/v1/files", formData);
+    return axiosInstance.post(
+      `/api/v1/files?folder=${encodeURIComponent(folder)}`,
+      formData,
+      {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      }
+    );
   },
 
-  getFile: (fileName) =>
-    axiosInstance.get("/api/v1/files", { params: { fileName } }),
+  getFile: (fileName, folder = "product") =>
+    axiosInstance.get(
+      `/api/v1/files?folder=${encodeURIComponent(folder)}&fileName=${encodeURIComponent(fileName)}`
+    ),
 };
