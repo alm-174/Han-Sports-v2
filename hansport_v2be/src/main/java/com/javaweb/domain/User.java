@@ -40,7 +40,7 @@ public class User {
     @OneToOne(mappedBy = "user")
     private Cart cart;
 
-    @Column(columnDefinition = "MEDIUMTEXT")
+    @Column(columnDefinition = "TEXT")
     private String refreshToken;
 
     private Instant createdAt;
