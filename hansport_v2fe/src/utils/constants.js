@@ -1,14 +1,21 @@
-const BASE_URL = "http://localhost:8080";
+const CLOUDINARY_CLOUD_NAME = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME;
+const CLOUDINARY_UPLOAD_FOLDER_PREFIX = import.meta.env.VITE_CLOUDINARY_UPLOAD_FOLDER_PREFIX || "hansport_v2";
 
-// ─── Logo assets (served by backend FileController) ───
-export const LOGO_CIRCLE = `${BASE_URL}/api/v1/files?fileName=z7807481637936_0284e7519d48b7526c7093c9e370821b.jpg&folder=logo`;
-export const LOGO_TEXT = `${BASE_URL}/api/v1/files?fileName=z7807481884127_d5f1ae90f114ea8f06f081653cf869fc.jpg&folder=logo`;
+function toCloudinaryUrl(folder, fileName) {
+  if (!fileName) return null;
+  if (fileName.startsWith("http") || fileName.startsWith("data:")) return fileName;
+  if (!CLOUDINARY_CLOUD_NAME) return null;
+
+  return `https://res.cloudinary.com/${CLOUDINARY_CLOUD_NAME}/image/upload/${CLOUDINARY_UPLOAD_FOLDER_PREFIX}/${folder}/${fileName}`;
+}
+
+// ─── Logo assets ───
+export const LOGO_CIRCLE = toCloudinaryUrl("logo", "z7807481637936_0284e7519d48b7526c7093c9e370821b.jpg");
+export const LOGO_TEXT = toCloudinaryUrl("logo", "z7807481884127_d5f1ae90f114ea8f06f081653cf869fc.jpg");
 
 // ─── Utility functions ───
 export function getImageUrl(fileName, folder = "product") {
-  if (!fileName) return null;
-  if (fileName.startsWith("http")) return fileName;
-  return `${BASE_URL}/api/v1/files?fileName=${encodeURIComponent(fileName)}&folder=${encodeURIComponent(folder)}`;
+  return toCloudinaryUrl(folder, fileName);
 }
 
 export function getFirstImage(item) {

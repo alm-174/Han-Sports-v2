@@ -19,6 +19,12 @@ import java.util.List;
 @Configuration
 public class DataSeeder {
 
+        @Value("${cloudinary.cloud-name}")
+        private String cloudinaryCloudName;
+
+        @Value("${cloudinary.upload-folder-prefix:hansport_v2}")
+        private String cloudinaryUploadFolderPrefix;
+
     @Value("${app.seed.enabled:true}")
     private boolean seedEnabled;
 
@@ -285,7 +291,7 @@ public class DataSeeder {
         if (images != null && !images.isEmpty()) {
             for (String imageName : images) {
                 ProductImage productImage = new ProductImage();
-                productImage.setImageUrl(imageName);
+                                productImage.setImageUrl(toCloudinaryUrl("product", imageName));
                 productImage.setProduct(savedProduct);
                 productImageRepository.save(productImage);
             }
@@ -293,4 +299,22 @@ public class DataSeeder {
 
         System.out.println(">>> SEEDED PRODUCT: " + name);
     }
+
+        private String toCloudinaryUrl(String folder, String fileName) {
+                if (fileName == null || fileName.isBlank()) {
+                        return fileName;
+                }
+                if (fileName.startsWith("http")) {
+                        return fileName;
+                }
+
+                String cleanFolder = folder == null || folder.isBlank() ? "product" : folder;
+                String normalizedPrefix = cloudinaryUploadFolderPrefix == null || cloudinaryUploadFolderPrefix.isBlank()
+                                ? "hansport_v2"
+                                : cloudinaryUploadFolderPrefix;
+
+                return "https://res.cloudinary.com/" + cloudinaryCloudName
+                                + "/image/upload/"
+                                + normalizedPrefix + "/" + cleanFolder + "/" + fileName;
+        }
 }

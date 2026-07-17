@@ -47,8 +47,8 @@ public class SecurityConfiguration {
                 .authorizeHttpRequests(
                         authz -> authz
                                 .requestMatchers("/", "/api/v1/auth/login", "/api/v1/auth/register",
-                                        "/api/v1/auth/refresh", "/storage/**", "/api/v1/auth/google").permitAll()
-                                .requestMatchers(HttpMethod.GET, "/api/v1/products", "/api/v1/products/**", "/api/v1/files", "/api/v1/settings").permitAll()
+                                    "/api/v1/auth/refresh", "/api/v1/auth/google").permitAll()
+                                .requestMatchers(HttpMethod.GET, "/api/v1/products", "/api/v1/products/**", "/api/v1/settings").permitAll()
                                 .requestMatchers(HttpMethod.POST, "/api/v1/products", "/api/v1/files").hasRole("ADMIN")
                                 .requestMatchers(HttpMethod.PUT, "/api/v1/products").hasRole("ADMIN")
                                 .requestMatchers(HttpMethod.DELETE, "/api/v1/products/**").hasRole("ADMIN")

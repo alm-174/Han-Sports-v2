@@ -23,12 +23,7 @@ export const productApi = {
 
     return axiosInstance.post(
       `/api/v1/files?folder=${encodeURIComponent(folder)}`,
-      formData,
-      {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      }
+      formData
     );
   },
 
@@ -41,17 +36,7 @@ export const productApi = {
 
     return axiosInstance.post(
       `/api/v1/files?folder=${encodeURIComponent(folder)}`,
-      formData,
-      {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      }
+      formData
     );
   },
-
-  getFile: (fileName, folder = "product") =>
-    axiosInstance.get(
-      `/api/v1/files?folder=${encodeURIComponent(folder)}&fileName=${encodeURIComponent(fileName)}`
-    ),
 };
