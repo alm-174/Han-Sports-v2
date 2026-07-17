@@ -14,7 +14,7 @@ import java.util.List;
 @Configuration
 public class CorsConfig {
 
-    @Value("${app.frontend.url:http://localhost:5173}")
+    @Value("${app.frontend.url:https://han-sports-v2fe.vercel.app}")
     private String frontendUrl;
 
     @Bean
