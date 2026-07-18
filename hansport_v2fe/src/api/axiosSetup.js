@@ -25,6 +25,12 @@ const axiosPublic = axios.create({
 // Tự động gắn accessToken vào mọi request
 axiosInstance.interceptors.request.use(
   (config) => {
+    const isFormData = typeof FormData !== "undefined" && config.data instanceof FormData;
+    if (isFormData && config.headers) {
+      delete config.headers["Content-Type"];
+      delete config.headers["content-type"];
+    }
+
     const { accessToken } = useAuthStore.getState();
     if (accessToken) {
       config.headers.Authorization = `Bearer ${accessToken}`;

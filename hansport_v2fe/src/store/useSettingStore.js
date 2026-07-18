@@ -4,14 +4,16 @@ import { settingApi } from "../api/settingApi";
 export const useSettingStore = create((set, get) => ({
   settings: null,
   loading: false,
+  error: null,
   fetchSettings: async () => {
     if (get().settings) return; // already fetched
-    set({ loading: true });
+    set({ loading: true, error: null });
     try {
       const res = await settingApi.getAllSettings();
-      set({ settings: res.data?.data || res.data || {} });
+      set({ settings: res.data?.data || res.data || {}, error: null });
     } catch (e) {
       console.error("Failed to fetch settings", e);
+      set({ error: e?.message || "Failed to fetch settings" });
     } finally {
       set({ loading: false });
     }
@@ -35,9 +37,10 @@ export const useSettingStore = create((set, get) => ({
   refreshSettings: async () => {
     try {
       const res = await settingApi.getAllSettings();
-      set({ settings: res.data?.data || res.data || {} });
+      set({ settings: res.data?.data || res.data || {}, error: null });
     } catch (e) {
       console.error(e);
+      set({ error: e?.message || "Failed to refresh settings" });
     }
   }
 }));

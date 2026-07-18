@@ -4,11 +4,34 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="12cc9a11-261f-47f1-a17b-c8939459500b" name="Changes" comment="" />
+    <list default="true" id="12cc9a11-261f-47f1-a17b-c8939459500b" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/../README.md" beforeDir="false" afterPath="$PROJECT_DIR$/../README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/javaweb/config/AppSettingSeeder.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/javaweb/config/AppSettingSeeder.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/javaweb/controller/AppSettingController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/javaweb/controller/AppSettingController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/javaweb/service/AppSettingService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/javaweb/service/AppSettingService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/javaweb/service/CloudinaryService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/javaweb/service/CloudinaryService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/application.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../hansport_v2fe/src/api/axiosSetup.js" beforeDir="false" afterPath="$PROJECT_DIR$/../hansport_v2fe/src/api/axiosSetup.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../hansport_v2fe/src/api/settingApi.js" beforeDir="false" afterPath="$PROJECT_DIR$/../hansport_v2fe/src/api/settingApi.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../hansport_v2fe/src/components/common/Footer.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../hansport_v2fe/src/components/common/Footer.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../hansport_v2fe/src/components/common/Header.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../hansport_v2fe/src/components/common/Header.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../hansport_v2fe/src/layouts/AdminLayout.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../hansport_v2fe/src/layouts/AdminLayout.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../hansport_v2fe/src/pages/admin/SettingsPage.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../hansport_v2fe/src/pages/admin/SettingsPage.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../hansport_v2fe/src/store/useSettingStore.js" beforeDir="false" afterPath="$PROJECT_DIR$/../hansport_v2fe/src/store/useSettingStore.js" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Interface" />
+        <option value="Class" />
+      </list>
+    </option>
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
@@ -18,6 +41,9 @@
   &quot;fromUser&quot;: false
 }</component>
   <component name="ProjectId" id="3EFCocxl9fgBqHfxqf5sScTUpAn" />
+  <component name="ProjectLevelVcsManager">
+    <ConfirmationsSetting value="1" id="Add" />
+  </component>
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />

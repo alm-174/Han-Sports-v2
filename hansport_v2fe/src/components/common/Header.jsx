@@ -4,7 +4,7 @@ import { useAuthStore } from "../../store/useAuthStore";
 import { useCartStore } from "../../store/useCartStore";
 import { useSettingStore } from "../../store/useSettingStore";
 import { authApi } from "../../api/authApi";
-import { LOGO_CIRCLE, LOGO_TEXT } from "../../utils/constants";
+import { LOGO_CIRCLE, getImageUrl } from "../../utils/constants";
 
 export default function Header() {
   const navigate = useNavigate();
@@ -29,6 +29,7 @@ export default function Header() {
   const userMenuRef = useRef(null);
   
   const HOTLINE = getSetting("HOTLINE", "090 123 4567");
+  const LOGO = getImageUrl(getSetting("LOGO", ""), "logo") || LOGO_CIRCLE;
 
   // Shadow on scroll
   useEffect(() => {
@@ -98,13 +99,13 @@ export default function Header() {
           {/* Logo */}
           <Link to="/" className="flex-shrink-0 flex items-center gap-2.5">
             <img
-              src={LOGO_CIRCLE}
+              src={LOGO}
               alt="HAN SPORTS"
               className="w-10 h-10 object-contain rounded-full"
               onError={(e) => { e.target.style.display = "none"; e.target.nextSibling.style.display = "block"; }}
             />
             <img
-              src={LOGO_TEXT}
+              src={LOGO}
               alt="HAN SPORTS"
               className="hidden md:block h-8 object-contain"
               style={{ display: "none" }}

@@ -1,10 +1,11 @@
 import { Link } from "react-router-dom";
 import { useSettingStore } from "../../store/useSettingStore";
-import { LOGO_CIRCLE } from "../../utils/constants";
+import { LOGO_CIRCLE, getImageUrl } from "../../utils/constants";
 
 export default function Footer() {
   const { getSetting } = useSettingStore();
   const HOTLINE = getSetting("HOTLINE", "090 123 4567");
+  const LOGO = getImageUrl(getSetting("LOGO", ""), "logo") || LOGO_CIRCLE;
 
   return (
     <footer style={{ background: "linear-gradient(135deg, #0f2027 0%, #1d4ed8 60%, #16a34a 100%)" }} className="text-white pt-14 pb-20 md:pb-10">
@@ -13,7 +14,7 @@ export default function Footer() {
           {/* Col 1: Brand */}
           <div className="md:col-span-1 flex flex-col gap-5">
             <div className="flex items-center gap-3">
-              <img src={LOGO_CIRCLE} alt="HAN SPORTS" className="w-12 h-12 object-contain rounded-full bg-white p-1" />
+              <img src={LOGO} alt="HAN SPORTS" className="w-12 h-12 object-contain rounded-full bg-white p-1" />
               <div>
                 <p className="font-extrabold text-lg leading-none">HAN SPORTS</p>
                 <p className="text-xs text-white/60 mt-0.5">Thế giới đồ thể thao chính hãng</p>

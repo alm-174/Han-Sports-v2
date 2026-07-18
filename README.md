@@ -1,324 +1,82 @@
-# Han Sports v2 - E-commerce Website
+# Hansport_v2
 
-![Java](https://img.shields.io/badge/Java-17-orange)
-![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.2.2-green)
-![MySQL](https://img.shields.io/badge/MySQL-8.x-blue)
-![JWT](https://img.shields.io/badge/Auth-JWT-black)
-![React](https://img.shields.io/badge/Frontend-React%20%2B%20Vite-61dafb)
-![TailwindCSS](https://img.shields.io/badge/UI-TailwindCSS-38bdf8)
+Phiên bản demo của một cửa hàng (backend Spring Boot + frontend React + Vite).
 
-**Han Sports v2** là website thương mại điện tử bán đồ thể thao, tập trung vào các sản phẩm cầu lông như vợt, giày, quần áo, balo, túi và phụ kiện.  
-Dự án gồm **Backend Spring Boot** và **Frontend React**, hỗ trợ người dùng mua hàng, quản lý giỏ hàng, đặt hàng, đăng nhập bảo mật và quản trị dữ liệu sản phẩm.
+## Tổng quan
+- Backend: `hansport_v2be` — Spring Boot (Java 17, Maven)
+- Frontend: `hansport_v2fe` — React (Vite)
 
----
+Ứng dụng gồm API cho sản phẩm, giỏ hàng, đặt hàng, xác thực (JWT + OAuth2 Google), gửi email, và lưu file upload.
 
-## Mục lục
+## Cấu trúc dự án (chung)
+- `hansport_v2be/` — mã nguồn backend, file cấu hình ở [hansport_v2be/src/main/resources/application.properties](hansport_v2be/src/main/resources/application.properties)
+- `hansport_v2fe/` — mã nguồn frontend (Vite + React), các file tĩnh và thư mục `upload/` chứa ảnh
 
-- [Tính năng chính](#tính-năng-chính)
-- [Công nghệ sử dụng](#công-nghệ-sử-dụng)
-- [Cấu trúc dự án](#cấu-trúc-dự-án)
-- [Yêu cầu hệ thống](#yêu-cầu-hệ-thống)
-- [Cấu hình database](#cấu-hình-database)
-- [Cấu hình backend](#cấu-hình-backend)
-- [Chạy dự án](#chạy-dự-án)
-- [Tài khoản demo](#tài-khoản-demo)
-
----
-
-## Tính năng chính
-
-### Người dùng
-
-- Đăng ký, đăng nhập tài khoản.
-- Đăng nhập bằng Google OAuth2.
-- Xác thực bằng JWT Access Token và Refresh Token.
-- Xem danh sách sản phẩm.
-- Xem chi tiết sản phẩm.
-- Tìm kiếm và lọc sản phẩm theo thương hiệu, đối tượng, danh mục.
-- Thêm sản phẩm vào giỏ hàng.
-- Cập nhật số lượng sản phẩm trong giỏ hàng.
-- Đặt hàng và xem lịch sử đơn hàng.
-- Cập nhật thông tin cá nhân.
-
-### Quản trị viên
-
-- Đăng nhập tài khoản quản trị.
-- Quản lý sản phẩm.
-- Quản lý hình ảnh sản phẩm.
-- Quản lý đơn hàng.
-- Cập nhật trạng thái đơn hàng.
-- Cấu hình thông tin hệ thống như banner, danh mục, hotline, phí vận chuyển và ngưỡng miễn phí ship.
-
-### Cấu hình hệ thống
-
-Dự án có cơ chế seed dữ liệu ban đầu khi chạy backend:
-
-- Seed role `ADMIN`, `USER`.
-- Seed tài khoản admin mặc định.
-- Seed cấu hình website:
-  - `HERO_SLIDES`
-  - `CATEGORIES`
-  - `BRANDS`
-  - `TARGETS`
-  - `HOTLINE`
-  - `SHIPPING_FEE`
-  - `FREE_SHIP_LIMIT`
-- Có thể seed sản phẩm và hình ảnh sản phẩm nếu được cấu hình trong seeder.
-
----
-
-## Công nghệ sử dụng
-
-### Backend
-
+## Yêu cầu & môi trường
 - Java 17
-- Spring Boot 3.2.2
-- Spring Web
-- Spring Security
-- Spring Data JPA
-- Hibernate
-- MySQL
 - Maven
-- JWT / OAuth2 Resource Server
-- Google API Client
-- Spring Mail
-- Thymeleaf
-- Lombok
-- Hibernate Validator
+- Node.js (phiên bản hiện tại: 18+ khuyến nghị)
+- MySQL (hoặc cấu hình JDBC khác)
 
-### Frontend
+## Cấu hình quan trọng
+- Database: `DB_URL`, `DB_USERNAME`, `DB_PASSWORD` (cấu hình mặc định có trong [hansport_v2be/src/main/resources/application.properties](hansport_v2be/src/main/resources/application.properties))
+- JWT: `JWT_BASE64_SECRET`, `JWT_ACCESS_TOKEN_VALIDITY`, `JWT_REFRESH_TOKEN_VALIDITY`
+- Upload path: `UPLOAD_FILE_BASE_PATH` — mặc định trỏ sang thư mục `../hansport_v2fe/upload`
+- OAuth2 Google: `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`
+- Email (Gmail): `spring.mail.username`, `spring.mail.password`
 
-- React.js
-- Vite
-- Tailwind CSS
-- React Router DOM
-- Zustand
-- Lucide Icons
-- Material Symbols
+Lưu ý: không commit thông tin nhạy cảm (client secret, mật khẩu email, bí mật JWT) vào git.
 
-### Database
-
-- MySQL 8.x
-
----
-
-## Cấu trúc dự án
-
-```text
-Han-Sports-v2
-├── hansport_v2be/        # Backend Spring Boot
-│   ├── src/main/java
-│   │   └── com/javaweb
-│   │       ├── config
-│   │       ├── controller
-│   │       ├── domain
-│   │       ├── repository
-│   │       ├── service
-│   │       └── util
-│   ├── src/main/resources
-│   │   └── application.properties
-│   └── pom.xml
-│
-├── hansport_v2fe/        # Frontend React
-│   ├── src
-│   ├── public
-│   ├── package.json
-│   └── vite.config.js
-│
-└── README.md
-```
-
-> Tên thư mục có thể thay đổi tùy cách bạn đặt project. Nếu project backend và frontend đang nằm cùng cấp, chỉ cần chạy đúng thư mục tương ứng.
-
----
-
-## Yêu cầu hệ thống
-
-Trước khi chạy dự án, cần cài đặt:
-
-- Java JDK 17+
-- Maven 3.8+
-- Node.js 18+
-- MySQL 8.x
-- Git
-
-Kiểm tra phiên bản:
+## Chạy backend (phát triển)
+1. Cấu hình MySQL và tạo database nếu cần.
+2. Từ thư mục `hansport_v2be`:
 
 ```bash
-java -version
-mvn -version
-node -v
-npm -v
-mysql --version
+mvn clean install
+mvn spring-boot:run
 ```
 
----
-
-## Cấu hình database
-
-Tạo database MySQL:
-
-```sql
-CREATE DATABASE hansport_v2
-CHARACTER SET utf8mb4
-COLLATE utf8mb4_unicode_ci;
-```
-
----
-
-## Cấu hình backend
-
-Mở file:
-
-```text
-src/main/resources/application.properties
-```
-
-Ví dụ cấu hình cơ bản:
-
-```properties
-spring.application.name=hansport
-
-spring.datasource.url=jdbc:mysql://localhost:3306/hansport_v2?createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
-spring.datasource.username=root
-spring.datasource.password=123456
-spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
-
-spring.jpa.hibernate.ddl-auto=update
-spring.jpa.show-sql=false
-
-spring.servlet.multipart.max-file-size=50MB
-spring.servlet.multipart.max-request-size=50MB
-
-app.seed.enabled=true
-```
-
-Nếu dùng biến môi trường, có thể cấu hình dạng:
-
-```properties
-spring.datasource.url=${DB_URL:jdbc:mysql://localhost:3306/hansport_v2?createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC}
-spring.datasource.username=${DB_USERNAME:root}
-spring.datasource.password=${DB_PASSWORD:123456}
-```
-
----
-
-## Chạy dự án
-
-### 1. Chạy backend
-
-Di chuyển vào thư mục backend:
+Hoặc build JAR và chạy:
 
 ```bash
-cd hansport_v2be
+mvn clean package
+java -jar target/hansport_v2-0.0.1-SNAPSHOT.jar
 ```
 
-Cài dependency và chạy project:
+Ứng dụng mặc định chạy trên cổng `8080` (có thể thay bằng biến `SERVER_PORT`).
 
-```bash
-mvn clean spring-boot:run
-```
-
-Backend mặc định chạy tại:
-
-```text
-http://localhost:8080
-```
-
----
-
-### 2. Chạy frontend
-
-Di chuyển vào thư mục frontend:
-
-```bash
-cd hansport_v2fe
-```
-
-Cài dependency:
+## Chạy frontend (phát triển)
+1. Vào thư mục `hansport_v2fe`:
 
 ```bash
 npm install
-```
-
-Chạy React:
-
-```bash
 npm run dev
 ```
 
-Frontend mặc định chạy tại:
+Trang frontend mặc định khởi chạy trên `http://localhost:5173`.
 
-```text
-http://localhost:5173
-```
+## Build production
+- Backend: `mvn clean package` → deploy JAR/war
+- Frontend: trong `hansport_v2fe` chạy `npm run build` → folder `dist` để deploy
 
----
+## Uploads & tài nguyên tĩnh
+- Thư mục upload frontend: `hansport_v2fe/upload/` — backend mặc định lưu file vào thư mục này (tham số `UPLOAD_FILE_BASE_PATH`).
 
-## Tài khoản demo
+## Seed dữ liệu
+- Có seeder được bật bằng `app.seed.enabled=true` trong file cấu hình để chèn dữ liệu mẫu khi ứng dụng khởi động. Kiểm tra class `DataSeeder` trong `hansport_v2be/src/main/java/com/javaweb/config`.
 
-Nếu bật seed dữ liệu:
+## Troubleshooting nhanh
+- Lỗi kết nối DB: kiểm tra `DB_URL`, user, password và quyền truy cập.
+- Lỗi upload: kiểm tra `spring.servlet.multipart.max-file-size` và `max-request-size` trong `application.properties`.
+- OAuth/Google login: chắc chắn `GOOGLE_CLIENT_ID` và `GOOGLE_CLIENT_SECRET` đã cấu hình đúng và callback URL khớp với frontend.
 
-```properties
-app.seed.enabled=true
-```
-
-Tài khoản admin mặc định:
-
-| Vai trò | Email | Mật khẩu |
-|---|---|---|
-| Admin | `admin@hansport.local` | `Admin@123` |
-
----
-
-## Dữ liệu seed mặc định
-
-Project có các class seeder trong package:
-
-```text
-com.javaweb.config
-```
-
-Ví dụ:
-
-```text
-AppSettingSeeder.java
-DataSeeder.java
-```
-
-### AppSettingSeeder
-
-Dùng để thêm dữ liệu cấu hình website ban đầu:
-
-- Banner trang chủ
-- Danh mục sản phẩm
-- Danh sách thương hiệu
-- Danh sách đối tượng sử dụng
-- Hotline
-- Phí vận chuyển
-- Mốc miễn phí vận chuyển
-
-Seeder này thường chỉ chạy khi bảng `app_setting` chưa có dữ liệu.
-
-### DataSeeder
-
-Dùng để thêm dữ liệu hệ thống ban đầu:
-
-- Role `ADMIN`
-- Role `USER`
-- Tài khoản admin mặc định
-- Map hình ảnh sản phẩm nếu sản phẩm đã tồn tại
-
-Có thể bật hoặc tắt bằng:
-
-```properties
-app.seed.enabled=true
-```
-
-hoặc:
-
-```properties
-app.seed.enabled=false
-```
+## Thông tin thêm
+- Pom backend: [hansport_v2be/pom.xml](hansport_v2be/pom.xml)
+- Frontend package: [hansport_v2fe/package.json](hansport_v2fe/package.json)
 
 ---
+Nếu bạn muốn, tôi có thể:
+- Tạo file `.env.example` cho backend và frontend chứa các biến môi trường cần thiết.
+- Tự động ẩn các secrets khỏi `application.properties` và hướng dẫn dùng biến môi trường.
+
+Liên hệ: người phát triển trong repo.

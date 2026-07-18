@@ -7,12 +7,34 @@ import { getImageUrl, getFirstImage } from "../../utils/constants";
 import toast from "react-hot-toast";
 
 export default function SettingsPage() {
-  const { settings, getSetting, refreshSettings } = useSettingStore();
+  const { settings, loading, error, fetchSettings, getSetting, refreshSettings } = useSettingStore();
   const [form, setForm] = useState(null);
   const [saving, setSaving] = useState(false);
 
+  const handleLogoUpload = async (file) => {
+    if (!file) return;
+    const t = toast.loading("Đang tải logo lên...");
+    try {
+      const res = await productApi.uploadFile(file, "logo");
+      const uploaded = res.data?.data?.fileName || res.data?.fileName;
+      const fileName = Array.isArray(uploaded) ? uploaded[0] : (uploaded || "");
+      setForm({ ...form, logo: fileName });
+      toast.success("Tải logo lên thành công!", { id: t });
+    } catch (err) {
+      toast.error("Tải logo thất bại!", { id: t });
+      console.error(err);
+    }
+  };
+
+  useEffect(() => {
+    if (!settings && !loading) {
+      fetchSettings();
+    }
+  }, [settings, loading, fetchSettings]);
+
   useEffect(() => {
     if (settings) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setForm({
         hotline: getSetting("HOTLINE", "090 123 4567"),
         shippingFee: getSetting("SHIPPING_FEE", "30000"),
@@ -20,13 +42,63 @@ export default function SettingsPage() {
         brands: (getSetting("BRANDS", [])).join(", "),
         targets: (getSetting("TARGETS", [])).join(", "),
         slides: getSetting("HERO_SLIDES", []),
+        logo: getSetting("LOGO", ""),
         categories: getSetting("CATEGORIES", []),
         headerNav: getSetting("HEADER_NAV", []),
       });
     }
-  }, [settings]);
+  }, [settings, getSetting]);
 
   const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
+
+  const normalizePath = (path, allowBlank = false) => {
+    const value = (path || "").trim();
+    if (!value) return allowBlank ? "" : "";
+    return value.startsWith("/") ? value : `/${value}`;
+  };
+
+  const validateBeforeSave = () => {
+    if (!form.hotline?.trim()) {
+      toast.error("Hotline không được để trống.");
+      return false;
+    }
+    if (!form.shippingFee?.toString().trim()) {
+      toast.error("Phí vận chuyển không được để trống.");
+      return false;
+    }
+    if (!form.freeShipLimit?.toString().trim()) {
+      toast.error("Mức Free Ship không được để trống.");
+      return false;
+    }
+
+    const invalidSlide = form.slides.find((slide) => !slide.image?.toString().trim());
+    if (invalidSlide) {
+      toast.error("Mỗi banner phải có ảnh.");
+      return false;
+    }
+
+    const invalidCategory = form.categories.find((cat) =>
+      !cat.name?.toString().trim() ||
+      !cat.icon?.toString().trim() ||
+      !cat.path?.toString().trim() ||
+      !cat.color?.toString().trim()
+    );
+    if (invalidCategory) {
+      toast.error("Mỗi danh mục phải có tên, icon, đường dẫn và màu sắc.");
+      return false;
+    }
+
+    const invalidNav = form.headerNav.find((nav) =>
+      !nav.label?.toString().trim() ||
+      !nav.path?.toString().trim()
+    );
+    if (invalidNav) {
+      toast.error("Mỗi liên kết menu phải có tên và đường dẫn.");
+      return false;
+    }
+
+    return true;
+  };
 
   const handleSlideChange = (index, field, value) => {
     const newSlides = [...form.slides];
@@ -48,7 +120,7 @@ export default function SettingsPage() {
     if (!file) return;
     const t = toast.loading("Đang tải ảnh lên...");
     try {
-      const res = await productApi.uploadFile(file);
+      const res = await productApi.uploadFile(file, "banner");
       const uploaded = res.data?.data?.fileName || res.data?.fileName;
       const fileName = Array.isArray(uploaded) ? uploaded[0] : (uploaded || "");
       handleSlideChange(index, "image", fileName);
@@ -58,7 +130,6 @@ export default function SettingsPage() {
       console.error(err);
     }
   };
-
   const handleCategoryChange = (index, field, value) => {
     const newCats = [...form.categories];
     newCats[index] = { ...newCats[index], [field]: value };
@@ -100,6 +171,7 @@ export default function SettingsPage() {
       brands: (getSetting("BRANDS", [])).join(", "),
       targets: (getSetting("TARGETS", [])).join(", "),
       slides: getSetting("HERO_SLIDES", []),
+        logo: getSetting("LOGO", ""),
       categories: getSetting("CATEGORIES", []),
       headerNav: getSetting("HEADER_NAV", []),
     });
@@ -108,19 +180,43 @@ export default function SettingsPage() {
 
   const handleSave = async (e) => {
     e.preventDefault();
+    if (!validateBeforeSave()) return;
+
     setSaving(true);
     try {
-      const updates = [
-        { settingKey: "HOTLINE", settingValue: form.hotline },
-        { settingKey: "SHIPPING_FEE", settingValue: form.shippingFee },
-        { settingKey: "FREE_SHIP_LIMIT", settingValue: form.freeShipLimit },
-        { settingKey: "BRANDS", settingValue: JSON.stringify(form.brands.split(",").map(s => s.trim()).filter(s => s)) },
-        { settingKey: "TARGETS", settingValue: JSON.stringify(form.targets.split(",").map(s => s.trim()).filter(s => s)) },
-        { settingKey: "HERO_SLIDES", settingValue: JSON.stringify(form.slides) },
-        { settingKey: "CATEGORIES", settingValue: JSON.stringify(form.categories) },
-        { settingKey: "HEADER_NAV", settingValue: JSON.stringify(form.headerNav) }
-      ];
-      await settingApi.updateBulkSettings(updates);
+      const payload = {
+        hotline: form.hotline.trim(),
+        shippingFee: Number(form.shippingFee),
+        freeShipLimit: Number(form.freeShipLimit),
+        logo: form.logo?.trim() || "",
+        brands: form.brands.split(",").map((s) => s.trim()).filter((s) => s),
+        targets: form.targets.split(",").map((s) => s.trim()).filter((s) => s),
+        heroSlides: form.slides.map((slide) => ({
+          title: slide.title?.trim() || "",
+          subtitle: slide.subtitle?.trim() || "",
+          cta: slide.cta?.trim() || "",
+          ctaLink: normalizePath(slide.ctaLink, true),
+          image: slide.image?.trim() || "",
+          imageFolder: slide.imageFolder?.trim() || "",
+          altText: slide.altText?.trim() || "",
+          bg: slide.bg?.trim() || "",
+          active: slide.active === false ? false : true,
+        })),
+        categories: form.categories.map((cat) => ({
+          name: cat.name?.trim() || "",
+          icon: cat.icon?.trim() || "",
+          path: normalizePath(cat.path),
+          color: cat.color?.trim() || "",
+          active: cat.active === false ? false : true,
+        })),
+        headerNav: form.headerNav.map((nav) => ({
+          label: nav.label?.trim() || "",
+          path: normalizePath(nav.path),
+          active: nav.active === false ? false : true,
+        })),
+      };
+
+      await settingApi.updateSiteSettings(payload);
       await refreshSettings();
       notifySync(syncEvent.SETTING_UPDATED);
       toast.success("Cập nhật cấu hình thành công!");
@@ -132,11 +228,30 @@ export default function SettingsPage() {
     }
   };
 
-  if (!form) return (
-    <div className="flex items-center justify-center py-20">
-      <div className="w-10 h-10 border-4 border-brand-blue border-t-transparent rounded-full animate-spin"></div>
-    </div>
-  );
+  if (!form) {
+    if (loading) {
+      return (
+        <div className="flex items-center justify-center py-20">
+          <div className="w-10 h-10 border-4 border-brand-blue border-t-transparent rounded-full animate-spin"></div>
+        </div>
+      );
+    }
+
+    return (
+      <div className="flex flex-col items-center justify-center py-20 gap-4">
+        <p className="text-text-muted text-center max-w-xl">
+          Không thể tải dữ liệu cấu hình. {error ? `${error}` : "Vui lòng thử lại hoặc kiểm tra kết nối đến backend."}
+        </p>
+        <button
+          type="button"
+          onClick={fetchSettings}
+          className="btn-primary py-2 px-4"
+        >
+          Thử lại
+        </button>
+      </div>
+    );
+  }
 
   return (
     <div className="max-w-3xl">
@@ -146,6 +261,28 @@ export default function SettingsPage() {
       </h1>
 
       <form onSubmit={handleSave} className="card p-6 flex flex-col gap-6">
+        <div>
+          <h2 className="text-title font-bold text-text-primary mb-1">Brand logo</h2>
+          <p className="text-sm text-text-muted mb-4">Logo hiển thị trên Header và Footer.</p>
+          <div className="flex flex-col gap-3">
+            <div className="flex items-center gap-4">
+              {form.logo ? (
+                <div className="relative w-24 h-24 rounded-xl overflow-hidden border border-surface-border bg-white group/logo">
+                  <img src={getImageUrl(form.logo, "logo")} alt="Logo" className="w-full h-full object-contain" />
+                  <button type="button" onClick={() => setForm({ ...form, logo: "" })} className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover/logo:opacity-100 transition-opacity"><span className="material-symbols-outlined text-white">delete</span></button>
+                </div>
+              ) : <div className="w-24 h-24 rounded-xl border border-dashed border-surface-border bg-surface-muted flex items-center justify-center text-text-muted"><span className="material-symbols-outlined text-3xl">image</span></div>}
+              <label className="btn-outline text-sm py-2 px-3 cursor-pointer flex items-center gap-2">
+                <span className="material-symbols-outlined" style={{ fontSize: 18 }}>upload</span>
+                Tải logo lên
+                <input type="file" className="hidden" accept="image/*" onChange={(e) => handleLogoUpload(e.target.files[0])} />
+              </label>
+            </div>
+            <p className="text-xs text-text-muted">Cập nhật logo hiện tại chưa được backend hỗ trợ. Logo chỉ hiển thị chứ chưa lưu được.</p>
+          </div>
+        </div>
+
+        <hr className="border-surface-border" />
 
         {/* Banners */}
         <div>
@@ -172,7 +309,7 @@ export default function SettingsPage() {
                     <div className="flex items-center gap-6">
                       {getFirstImage(slide) ? (
                         <div className="relative w-32 h-20 rounded-lg overflow-hidden border border-surface-border group/img">
-                          <img src={getImageUrl(getFirstImage(slide))} alt="Banner" className="w-full h-full object-cover" />
+                          <img src={getImageUrl(getFirstImage(slide), slide.imageFolder || "banner")} alt="Banner" className="w-full h-full object-cover" />
                           <button type="button" onClick={() => handleSlideChange(i, "image", "")} className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover/img:opacity-100 transition-opacity">
                             <span className="material-symbols-outlined text-white" style={{ fontSize: 20 }}>delete</span>
                           </button>

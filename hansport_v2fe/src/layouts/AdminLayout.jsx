@@ -1,7 +1,8 @@
 import { Outlet, Link, useLocation, Navigate } from "react-router-dom";
 import { useAuthStore } from "../store/useAuthStore";
 import { authApi } from "../api/authApi";
-import { LOGO_CIRCLE } from "../utils/constants";
+import { LOGO_CIRCLE, getImageUrl } from "../utils/constants";
+import { useSettingStore } from "../store/useSettingStore";
 
 const NAV_ITEMS = [
   { label: "Dashboard", icon: "dashboard", path: "/admin" },
@@ -13,6 +14,8 @@ const NAV_ITEMS = [
 
 export default function AdminLayout() {
   const { user, isAdmin, clearAuth } = useAuthStore();
+  const { getSetting } = useSettingStore();
+  const LOGO = getImageUrl(getSetting("LOGO", ""), "logo") || LOGO_CIRCLE;
   const location = useLocation();
 
   if (!user) return <Navigate to="/login" replace />;
@@ -34,7 +37,7 @@ export default function AdminLayout() {
         {/* Logo */}
         <div className="px-5 py-5 border-b border-white/10">
           <Link to="/" className="flex items-center gap-3">
-            <img src={LOGO_CIRCLE} alt="HAN SPORTS" className="w-10 h-10 rounded-full object-contain bg-white p-1" />
+            <img src={LOGO} alt="HAN SPORTS" className="w-10 h-10 rounded-full object-contain bg-white p-1" />
             <div>
               <p className="text-white font-extrabold text-base leading-none">HAN SPORTS</p>
               <p className="text-white/40 text-xs mt-0.5">Admin Panel</p>

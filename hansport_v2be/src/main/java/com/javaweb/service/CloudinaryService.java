@@ -13,7 +13,7 @@ import java.util.Set;
 @Service
 public class CloudinaryService {
 
-    private static final Set<String> ALLOWED_FOLDERS = Set.of("product", "logo");
+    private static final Set<String> ALLOWED_FOLDERS = Set.of("product", "logo", "banner");
 
     private final Cloudinary cloudinary;
 
