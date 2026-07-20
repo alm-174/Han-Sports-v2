@@ -7,6 +7,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.net.URI;
+import java.util.Arrays;
 import java.util.Map;
 import java.util.Set;
 
@@ -44,5 +46,53 @@ public class CloudinaryService {
         }
 
         return secureUrl.toString();
+    }
+
+    public boolean deleteByUrl(String imageUrl) {
+        if (imageUrl == null || imageUrl.isBlank()) {
+            return false;
+        }
+
+        try {
+            String publicId = extractPublicId(imageUrl);
+            if (publicId == null || publicId.isBlank()) {
+                return false;
+            }
+
+            Map<?, ?> result = cloudinary.uploader().destroy(
+                    publicId,
+                    ObjectUtils.asMap("resource_type", "image")
+            );
+            Object deleteResult = result.get("result");
+            return "ok".equals(deleteResult);
+        } catch (IOException e) {
+            return false;
+        }
+    }
+
+    private String extractPublicId(String imageUrl) {
+        try {
+            URI uri = URI.create(imageUrl);
+            String[] segments = uri.getPath().split("/");
+            int uploadIndex = Arrays.asList(segments).indexOf("upload");
+            if (uploadIndex < 0 || uploadIndex + 1 >= segments.length) {
+                return null;
+            }
+
+            StringBuilder publicId = new StringBuilder();
+            for (int i = uploadIndex + 1; i < segments.length; i++) {
+                if (i == uploadIndex + 1 && segments[i].matches("v\\d+")) {
+                    continue;
+                }
+                if (publicId.length() > 0) {
+                    publicId.append('/');
+                }
+                publicId.append(segments[i]);
+            }
+
+            return publicId.toString();
+        } catch (Exception e) {
+            return null;
+        }
     }
 }

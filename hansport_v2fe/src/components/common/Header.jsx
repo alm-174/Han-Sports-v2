@@ -26,6 +26,9 @@ export default function Header() {
   const [userMenuOpen, setUserMenuOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [searchSuggestions, setSearchSuggestions] = useState([]);
+  const [showSearchSuggestions, setShowSearchSuggestions] = useState(false);
+  const [searchLoading, setSearchLoading] = useState(false);
   const userMenuRef = useRef(null);
   
   const HOTLINE = getSetting("HOTLINE", "090 123 4567");
@@ -49,12 +52,63 @@ export default function Header() {
     return () => document.removeEventListener("mousedown", handler);
   }, []);
 
+  useEffect(() => {
+    const keyword = search.trim();
+    if (!keyword || keyword.length < 2) {
+      setSearchSuggestions([]);
+      setShowSearchSuggestions(false);
+      return;
+    }
+
+    const timer = setTimeout(async () => {
+      try {
+        setSearchLoading(true);
+        const res = await authApi.get?.("/health") || null;
+        if (res) {
+          // noop to keep the effect warm; actual product lookup happens below
+        }
+
+        const productRes = await import("../../api/productApi").then((mod) => mod.productApi.getAll({
+          page: 0,
+          size: 6,
+          filter: `name~'${keyword.replace(/'/g, "\\'")}'`,
+        }));
+
+        const items = productRes.data?.data?.result || productRes.data?.result || [];
+        setSearchSuggestions(items);
+        setShowSearchSuggestions(items.length > 0);
+      } catch (err) {
+        console.error(err);
+        setSearchSuggestions([]);
+        setShowSearchSuggestions(false);
+      } finally {
+        setSearchLoading(false);
+      }
+    }, 250);
+
+    return () => clearTimeout(timer);
+  }, [search]);
+
   const handleSearch = (e) => {
     e.preventDefault();
     if (search.trim()) {
       navigate(`/shop?q=${encodeURIComponent(search.trim())}`);
       setMobileMenuOpen(false);
+      setShowSearchSuggestions(false);
     }
+  };
+
+  const handleSearchInputChange = (e) => {
+    const value = e.target.value;
+    setSearch(value);
+    setShowSearchSuggestions(value.trim().length >= 2);
+  };
+
+  const handleSelectSuggestion = (value) => {
+    setSearch(value);
+    setShowSearchSuggestions(false);
+    navigate(`/shop?q=${encodeURIComponent(value)}`);
+    setMobileMenuOpen(false);
   };
 
   const handleLogout = async () => {
@@ -120,11 +174,35 @@ export default function Header() {
           <form onSubmit={handleSearch} className="hidden md:flex flex-1 max-w-xl relative">
             <input
               value={search}
-              onChange={(e) => setSearch(e.target.value)}
+              onChange={handleSearchInputChange}
+              onFocus={() => setShowSearchSuggestions(search.trim().length >= 2)}
+              onBlur={() => setTimeout(() => setShowSearchSuggestions(false), 120)}
               type="text"
               placeholder="Tìm kiếm sản phẩm, thương hiệu..."
               className="w-full h-11 pl-5 pr-14 rounded-pill border-2 border-surface-border bg-surface-soft text-base text-text-primary placeholder:text-text-muted focus:border-brand-blue focus:ring-2 focus:ring-brand-blue/10 transition-all duration-200"
             />
+            {showSearchSuggestions && (
+              <div className="absolute left-0 right-0 top-full mt-2 z-[60] rounded-xl border border-surface-border bg-white shadow-lg overflow-hidden">
+                {searchLoading ? (
+                  <div className="px-4 py-3 text-sm text-text-muted">Đang tìm sản phẩm...</div>
+                ) : searchSuggestions.length > 0 ? (
+                  searchSuggestions.map((item) => (
+                    <button
+                      key={item.id}
+                      type="button"
+                      onMouseDown={(e) => e.preventDefault()}
+                      onClick={() => handleSelectSuggestion(item.name)}
+                      className="flex w-full items-center justify-between px-4 py-3 text-left text-sm hover:bg-brand-blue-light transition-all"
+                    >
+                      <span className="font-medium text-text-primary">{item.name}</span>
+                      <span className="text-xs text-text-muted">{new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" }).format(item.price)}</span>
+                    </button>
+                  ))
+                ) : (
+                  <div className="px-4 py-3 text-sm text-text-muted">Không có gợi ý phù hợp</div>
+                )}
+              </div>
+            )}
             <button
               type="submit"
               className="absolute right-1.5 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full flex items-center justify-center text-white transition-all"
@@ -262,11 +340,35 @@ export default function Header() {
             <form onSubmit={handleSearch} className="relative mb-3">
               <input
                 value={search}
-                onChange={(e) => setSearch(e.target.value)}
+                onChange={handleSearchInputChange}
+                onFocus={() => setShowSearchSuggestions(search.trim().length >= 2)}
+                onBlur={() => setTimeout(() => setShowSearchSuggestions(false), 120)}
                 type="text"
                 placeholder="Tìm kiếm..."
                 className="w-full h-10 pl-4 pr-12 rounded-pill border border-surface-border text-sm bg-surface-soft"
               />
+              {showSearchSuggestions && (
+                <div className="absolute left-0 right-0 top-full mt-2 z-[60] rounded-xl border border-surface-border bg-white shadow-lg overflow-hidden">
+                  {searchLoading ? (
+                    <div className="px-3 py-2 text-sm text-text-muted">Đang tìm sản phẩm...</div>
+                  ) : searchSuggestions.length > 0 ? (
+                    searchSuggestions.map((item) => (
+                      <button
+                        key={item.id}
+                        type="button"
+                        onMouseDown={(e) => e.preventDefault()}
+                        onClick={() => handleSelectSuggestion(item.name)}
+                        className="flex w-full items-center justify-between px-3 py-2.5 text-left text-sm hover:bg-brand-blue-light transition-all"
+                      >
+                        <span className="font-medium text-text-primary">{item.name}</span>
+                        <span className="text-xs text-text-muted">{new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" }).format(item.price)}</span>
+                      </button>
+                    ))
+                  ) : (
+                    <div className="px-3 py-2 text-sm text-text-muted">Không có gợi ý phù hợp</div>
+                  )}
+                </div>
+              )}
               <button type="submit" className="absolute right-2 top-1/2 -translate-y-1/2 text-brand-blue">
                 <span className="material-symbols-outlined">search</span>
               </button>

@@ -17,17 +17,27 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
 public class ProductService {
     private final ProductRepository productRepository;
     private final ProductImageRepository productImageRepository;
-    public ProductService(ProductRepository productRepository, ProductImageRepository productImageRepository) {
+    private final CloudinaryService cloudinaryService;
+
+    public ProductService(ProductRepository productRepository,
+                          ProductImageRepository productImageRepository,
+                          CloudinaryService cloudinaryService) {
         this.productRepository = productRepository;
         this.productImageRepository = productImageRepository;
+        this.cloudinaryService = cloudinaryService;
     }
 
     @Transactional
@@ -38,7 +48,7 @@ public class ProductService {
         Product product = new Product();
         this.applyProductRequest(product, req);
         Product currentProduct = this.productRepository.save(product);
-        currentProduct.setImages(this.addImage(req.getImages(), currentProduct));
+        this.replaceImages(req.getImages(), currentProduct);
         return this.convertToResCreateProductDTO(currentProduct);
     }
 
@@ -54,7 +64,7 @@ public class ProductService {
 
         this.applyProductRequest(currentProduct, product);
         this.productRepository.save(currentProduct);
-        this.addImage(product.getImages(), currentProduct);
+        this.replaceImages(product.getImages(), currentProduct);
         return convertToResUpdateProductDTO(currentProduct);
     }
     public ResProductDTO fetchProductById(long id) throws IdInvalidException {
@@ -115,16 +125,74 @@ public class ProductService {
 
     }
 
-    public List<ProductImage> addImage(List<String> images, Product product){
-        List<ProductImage> imageList = new ArrayList<>();
-        for(String image : images){
-            ProductImage productImage = new ProductImage();
-            productImage.setImageUrl(image);
-            productImage.setProduct(product);
-            this.productImageRepository.save(productImage);
-            imageList.add(productImage);
+    public void replaceImages(List<String> requestedImages, Product product) {
+        if (requestedImages == null) {
+            requestedImages = new ArrayList<>();
         }
-        return imageList;   }
+
+        List<String> normalizedImages = normalizeImages(requestedImages);
+        Set<String> requestedImageSet = new LinkedHashSet<>(normalizedImages);
+
+        List<ProductImage> managedImages = product.getImages();
+        if (managedImages == null) {
+            managedImages = new ArrayList<>();
+            product.setImages(managedImages);
+        }
+
+        List<ProductImage> existingImages = new ArrayList<>(managedImages);
+        Map<String, ProductImage> existingByUrl = existingImages.stream()
+                .collect(Collectors.toMap(
+                        ProductImage::getImageUrl,
+                        image -> image,
+                        (first, ignored) -> first,
+                        LinkedHashMap::new
+                ));
+
+        for (ProductImage existingImage : existingImages) {
+            if (!requestedImageSet.contains(existingImage.getImageUrl())) {
+                deleteProductImageFileIfUnused(existingImage.getImageUrl());
+                this.productImageRepository.delete(existingImage);
+            }
+        }
+
+        List<ProductImage> orderedImages = new ArrayList<>();
+        for (String requestedImage : normalizedImages) {
+            ProductImage productImage = existingByUrl.get(requestedImage);
+            if (productImage == null) {
+                productImage = new ProductImage();
+                productImage.setImageUrl(requestedImage);
+                productImage.setProduct(product);
+                this.productImageRepository.save(productImage);
+            }
+            orderedImages.add(productImage);
+        }
+
+        managedImages.clear();
+        managedImages.addAll(orderedImages);
+    }
+
+    private List<String> normalizeImages(List<String> requestedImages) {
+        if (requestedImages == null || requestedImages.isEmpty()) {
+            return new ArrayList<>();
+        }
+
+        return requestedImages.stream()
+                .filter(Objects::nonNull)
+                .map(String::trim)
+                .filter(image -> !image.isBlank())
+                .distinct()
+                .collect(Collectors.toList());
+    }
+
+    private void deleteProductImageFileIfUnused(String imageUrl) {
+        if (imageUrl == null || imageUrl.isBlank()) {
+            return;
+        }
+
+        if (imageUrl.startsWith("http")) {
+            this.cloudinaryService.deleteByUrl(imageUrl);
+        }
+    }
 
     public ResCreateProductDTO convertToResCreateProductDTO(Product product) {
         ResCreateProductDTO resCreateProductDTO = new ResCreateProductDTO();

@@ -5,6 +5,7 @@ import { useCartStore } from "../../store/useCartStore";
 import { useAuthStore } from "../../store/useAuthStore";
 import { useSettingStore } from "../../store/useSettingStore";
 import { getImageUrl, formatVND, getFirstImage } from "../../utils/constants";
+import { loadLocations, getProvinces, getDistricts, getWards, getProvinceName, getDistrictName, getWardName } from "../../utils/locations";
 
 export default function CheckoutPage() {
   const navigate = useNavigate();
@@ -16,6 +17,9 @@ export default function CheckoutPage() {
   const [form, setForm] = useState({
     receiverName: user?.fullName || "",
     receiverPhone: user?.phone || "",
+    receiverProvince: "",
+    receiverDistrict: "",
+    receiverWard: "",
     receiverAddress: user?.address || "",
     note: "",
     paymentMethod: "COD",
@@ -26,14 +30,60 @@ export default function CheckoutPage() {
     if (cartItems.length === 0) { navigate("/cart"); return; }
   }, [user, cartItems]);
 
+  // Location selects
+  const [provinces, setProvinces] = useState([]);
+  const [districts, setDistricts] = useState([]);
+  const [wards, setWards] = useState([]);
+
+  useEffect(() => {
+    // load full locations (from local file or public API)
+    loadLocations().then(() => setProvinces(getProvinces())).catch(() => setProvinces(getProvinces()));
+  }, []);
+
+  useEffect(() => {
+    if (form.receiverProvince) {
+      setDistricts(getDistricts(form.receiverProvince));
+    } else {
+      setDistricts([]);
+    }
+    setForm((f) => ({ ...f, receiverDistrict: "", receiverWard: "" }));
+    setWards([]);
+  }, [form.receiverProvince]);
+
+  useEffect(() => {
+    if (form.receiverProvince && form.receiverDistrict) {
+      setWards(getWards(form.receiverProvince, form.receiverDistrict));
+    } else {
+      setWards([]);
+    }
+    setForm((f) => ({ ...f, receiverWard: "" }));
+  }, [form.receiverDistrict]);
+
   const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setSubmitting(true);
     try {
-      const orderData = { ...form, cartDetailIds: selectedIds };
-      // Only COD supported now: create order directly
+      // Compose receiverAddress from parts for backend compatibility
+      const provinceName = getProvinceName(form.receiverProvince) || form.receiverProvince;
+      const districtName = getDistrictName(form.receiverProvince, form.receiverDistrict) || form.receiverDistrict;
+      const wardName = getWardName(form.receiverProvince, form.receiverDistrict, form.receiverWard) || form.receiverWard;
+      const composedAddress = [
+        wardName && String(wardName).trim(),
+        districtName && districtName.trim(),
+        provinceName && provinceName.trim(),
+      ].filter(Boolean).join(', ');
+
+      // update local form state so UI reflects final composed address
+      setForm((f) => ({ ...f, receiverAddress: composedAddress || f.receiverAddress }));
+
+      const orderData = {
+        ...form,
+        receiverAddress: composedAddress || form.receiverAddress,
+        cartDetailIds: selectedIds,
+      };
+
       await orderApi.createOrder(orderData);
       removeSelectedItems();
       setSuccess(true);
@@ -88,7 +138,7 @@ export default function CheckoutPage() {
                   <span className="material-symbols-outlined text-brand-blue" style={{ fontSize: 24 }}>local_shipping</span>
                   Thông tin giao hàng
                 </h2>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-semibold text-text-secondary mb-2">Họ và tên *</label>
                     <input name="receiverName" required value={form.receiverName} onChange={handleChange}
@@ -99,11 +149,59 @@ export default function CheckoutPage() {
                     <input name="receiverPhone" required value={form.receiverPhone} onChange={handleChange}
                       placeholder="090 123 4567" type="tel" className="input-field" />
                   </div>
-                  <div className="md:col-span-2">
-                    <label className="block text-sm font-semibold text-text-secondary mb-2">Địa chỉ giao hàng *</label>
-                    <input name="receiverAddress" required value={form.receiverAddress} onChange={handleChange}
-                      placeholder="Số nhà, đường, phường/xã, quận/huyện, tỉnh/thành" className="input-field" />
+
+                  <div>
+                    <label className="block text-sm font-semibold text-text-secondary mb-2">Tỉnh/Thành phố *</label>
+                    <select
+                      name="receiverProvince"
+                      value={form.receiverProvince}
+                      onChange={(e) => setForm({ ...form, receiverProvince: e.target.value })}
+                      required
+                      className="input-field"
+                    >
+                      <option value="">Chọn Tỉnh/Thành</option>
+                      {provinces.map((p) => (
+                        <option key={p.code} value={p.code}>{p.name}</option>
+                      ))}
+                    </select>
                   </div>
+
+                  <div>
+                    <label className="block text-sm font-semibold text-text-secondary mb-2">Quận/Huyện *</label>
+                    <select
+                      name="receiverDistrict"
+                      value={form.receiverDistrict}
+                      onChange={(e) => setForm({ ...form, receiverDistrict: e.target.value })}
+                      required
+                      className="input-field"
+                    >
+                      <option value="">Chọn Quận/Huyện</option>
+                      {districts.map((d) => (
+                        <option key={d.code} value={d.code}>{d.name}</option>
+                      ))}
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-semibold text-text-secondary mb-2">Xã/Phường *</label>
+                    <select
+                      name="receiverWard"
+                      value={form.receiverWard}
+                      onChange={(e) => setForm({ ...form, receiverWard: e.target.value })}
+                      required
+                      className="input-field"
+                    >
+                      <option value="">Chọn Xã/Phường</option>
+                      {wards.map((w) => (
+                        <option key={w.code} value={w.code}>{w.name}</option>
+                      ))}
+                    </select>
+                  </div>
+
+                  <div className="md:col-span-2">
+                    <p className="text-sm text-text-muted">Địa chỉ sẽ được ghép từ Xã/Phường, Quận/Huyện, Tỉnh/Thành.</p>
+                  </div>
+
                   <div className="md:col-span-2">
                     <label className="block text-sm font-semibold text-text-secondary mb-2">Ghi chú (tùy chọn)</label>
                     <textarea name="note" value={form.note} onChange={handleChange} rows={3}

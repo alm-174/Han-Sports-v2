@@ -77,7 +77,7 @@ public class DataSeeder {
                     "Yonex",
                     "Unisex",
                     "Vợt cầu lông",
-                    List.of("1779380718207-1777975941237-11play-2.jpg")
+                    List.of("https://res.cloudinary.com/onpunkjc/image/upload/1778404533555-z7807609355308_3a84539a21720abcbee2df807b49fbf4_i0fsnx")
             );
 
             seedProduct(
@@ -91,7 +91,7 @@ public class DataSeeder {
                     "Yonex",
                     "Unisex",
                     "Vợt cầu lông",
-                    List.of("z7807609191141_f25aa0bfde8db1a316cebcd849ab308e.jpg")
+                    List.of("https://res.cloudinary.com/onpunkjc/image/upload/1778400536887-z7807609191141_f25aa0bfde8db1a316cebcd849ab308e_nmpsfy")
             );
 
             seedProduct(
@@ -105,7 +105,7 @@ public class DataSeeder {
                     "Yonex",
                     "Unisex",
                     "Cước cầu lông",
-                    List.of("z7807609223261_1b77c2026c1fc594ed6ac292331054a2.jpg")
+                    List.of("https://res.cloudinary.com/onpunkjc/image/upload/1778400193714-z7807609223261_1b77c2026c1fc594ed6ac292331054a2_e6jwzl")
             );
 
             seedProduct(
@@ -119,7 +119,7 @@ public class DataSeeder {
                     "Yonex",
                     "Unisex",
                     "Cước cầu lông",
-                    List.of("z7807609230054_3d48f6a8e35e80585cd37b83055a1293.jpg")
+                    List.of("https://res.cloudinary.com/onpunkjc/image/upload/1778403678223-z7807609230054_3d48f6a8e35e80585cd37b83055a1293_vq1kki")
             );
 
             seedProduct(
@@ -133,7 +133,7 @@ public class DataSeeder {
                     "Yonex",
                     "Unisex",
                     "Cước cầu lông",
-                    List.of("z7807609232829_5f55e72b19870f5e64d44eac2f634bf8.jpg")
+                    List.of("https://res.cloudinary.com/onpunkjc/image/upload/1778400166082-z7807609232829_5f55e72b19870f5e64d44eac2f634bf8_simgew")
             );
 
             seedProduct(
@@ -147,7 +147,7 @@ public class DataSeeder {
                     "Yonex",
                     "Unisex",
                     "Quả cầu lông",
-                    List.of("z7807609269260_845dbcb270cfdcb82da6d8c6e6abc61a.jpg")
+                    List.of("https://res.cloudinary.com/onpunkjc/image/upload/1778400187571-z7807609269260_845dbcb270cfdcb82da6d8c6e6abc61a_exchnz")
             );
 
             seedProduct(
@@ -161,7 +161,7 @@ public class DataSeeder {
                     "Victor",
                     "Unisex",
                     "Vợt cầu lông",
-                    List.of("z7807609322265_fb06fb3c742ee14a2a5288e545810a51.jpg")
+                    List.of("https://res.cloudinary.com/onpunkjc/image/upload/1778404542870-z7807609181998_df00d065d46ef64b6278689dc2977e41_kcxwn3")
             );
 
             seedProduct(
@@ -175,7 +175,7 @@ public class DataSeeder {
                     "Lining",
                     "Unisex",
                     "Vợt cầu lông",
-                    List.of("z7807609347401_fe09cc383d53518eabacc280305fe273.jpg")
+                    List.of("https://res.cloudinary.com/onpunkjc/image/upload/1778403029583-z7807609347401_fe09cc383d53518eabacc280305fe273_ltoha0")
             );
 
             seedProduct(
@@ -189,7 +189,7 @@ public class DataSeeder {
                     "Yonex",
                     "Unisex",
                     "Giày cầu lông",
-                    List.of("z7807609355308_3a84539a21720abcbee2df807b49fbf4.jpg")
+                    List.of("https://res.cloudinary.com/onpunkjc/image/upload/1778403089856-z7807609451931_dc176a615a539000609e5e4280f8121_rkbkb8")
             );
 
             seedProduct(
@@ -203,7 +203,7 @@ public class DataSeeder {
                     "Yonex",
                     "Unisex",
                     "Phụ kiện cầu lông",
-                    List.of("z7807609384640_16c826aaa02b8e6f4c7c73bd0b604165.jpg")
+                    List.of("https://res.cloudinary.com/onpunkjc/image/upload/1778400173041-z7807609418318_5c786a701e9371fed0595dba8e5991b9_e1gtuh")
             );
 
             seedProduct(
@@ -217,7 +217,7 @@ public class DataSeeder {
                     "Khác",
                     "Unisex",
                     "Phụ kiện cầu lông",
-                    List.of("z7807609411807_a35c32b076c49b091eb34b0d346e540a.jpg")
+                    List.of("https://res.cloudinary.com/onpunkjc/image/upload/1778403693124-z7807609429737_6f0eac1838eb3b5e2fbd42291367ee47_yh9flh")
             );
 
             seedProduct(
@@ -231,7 +231,7 @@ public class DataSeeder {
                     "Khác",
                     "Unisex",
                     "Phụ kiện cầu lông",
-                    List.of("z7807609429737_6f0eac1838eb3b5e2fbd42291367ee47.jpg")
+                    List.of("https://res.cloudinary.com/onpunkjc/image/upload/hansport_v2/product/ao1vsthxlpd88rbxdfbt")
             );
 
             System.out.println(">>> PRODUCT COUNT = " + productRepository.count());
