@@ -145,15 +145,65 @@ public class OrderService {
 
     @Transactional
     public ResOrderDTO updateOrderStatus(ReqUpdateOrderStatusDTO req) throws IdInvalidException {
-        Order order = this.orderRepository.findById(req.getId())
+        return updateOrderStatusById(req.getId(), req.getStatus());
+    }
+
+    @Transactional
+    public ResOrderDTO updateOrderStatusById(long orderId, String status) throws IdInvalidException {
+        Order order = this.orderRepository.findById(orderId)
                 .orElseThrow(() -> new IdInvalidException("Đơn hàng không tồn tại"));
-        String status = req.getStatus().trim().toUpperCase();
+        String normalizedStatus = status == null ? "" : status.trim().toUpperCase();
         List<String> allowedStatus = Arrays.asList("PENDING", "PROCESSING", "SHIPPING", "COMPLETED", "CANCELLED");
-        if (!allowedStatus.contains(status)) {
+        if (!allowedStatus.contains(normalizedStatus)) {
             throw new IdInvalidException("Trạng thái đơn hàng không hợp lệ");
         }
-        order.setStatus(status);
+        order.setStatus(normalizedStatus);
         return this.convertToResOrderDTO(this.orderRepository.save(order));
+    }
+
+    @Transactional
+    public ResOrderDTO updateOrderStatusFromGhn(String clientOrderCode, String ghnOrderCode, String status) {
+        if (clientOrderCode == null || clientOrderCode.isBlank()) {
+            return null;
+        }
+
+        long orderId;
+        try {
+            orderId = Long.parseLong(clientOrderCode.trim());
+        } catch (NumberFormatException ex) {
+            return null;
+        }
+
+        Optional<Order> orderOptional = this.orderRepository.findById(orderId);
+        if (orderOptional.isEmpty()) {
+            return null;
+        }
+
+        Order order = orderOptional.get();
+        String normalizedStatus = mapGhnStatusToInternal(status);
+        if (normalizedStatus != null) {
+            order.setStatus(normalizedStatus);
+        }
+        if (ghnOrderCode != null && !ghnOrderCode.isBlank()) {
+            order.setGhnOrderCode(ghnOrderCode.trim());
+        }
+        return this.convertToResOrderDTO(this.orderRepository.save(order));
+    }
+
+    private String mapGhnStatusToInternal(String ghnStatus) {
+        if (ghnStatus == null || ghnStatus.isBlank()) {
+            return null;
+        }
+
+        String normalized = ghnStatus.trim().toLowerCase();
+        return switch (normalized) {
+            case "ready_to_pick", "picking", "picked", "storing", "transporting", "sorting", "exception", "lost", "damage" -> "PROCESSING";
+            case "delivering" -> "SHIPPING";
+            case "delivered" -> "COMPLETED";
+            case "cancel", "canceled", "cancelled" -> "CANCELLED";
+            case "delivery_fail", "waiting_to_return", "return", "returning", "returned" -> "PROCESSING";
+            default -> null;
+        };
     }
 
     @Transactional

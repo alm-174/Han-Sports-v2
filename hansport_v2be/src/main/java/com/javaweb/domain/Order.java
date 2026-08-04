@@ -28,6 +28,8 @@ public class Order {
 
     private String status;
 
+    private String ghnOrderCode;
+
     @ManyToOne
     @JoinColumn(name = "user_id")
     @JsonIgnore

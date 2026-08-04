@@ -1,11 +1,11 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { orderApi } from "../../api/orderApi";
+import { ghnApi } from "../../api/ghnApi";
 import { useCartStore } from "../../store/useCartStore";
 import { useAuthStore } from "../../store/useAuthStore";
 import { useSettingStore } from "../../store/useSettingStore";
 import { getImageUrl, formatVND, getFirstImage } from "../../utils/constants";
-import { loadLocations, getProvinces, getDistricts, getWards, getProvinceName, getDistrictName, getWardName } from "../../utils/locations";
 
 export default function CheckoutPage() {
   const navigate = useNavigate();
@@ -24,70 +24,206 @@ export default function CheckoutPage() {
     note: "",
     paymentMethod: "COD",
   });
+  const [provinces, setProvinces] = useState([]);
+  const [districts, setDistricts] = useState([]);
+  const [wards, setWards] = useState([]);
+  const [feeInfo, setFeeInfo] = useState(null);
+  const [feeLoading, setFeeLoading] = useState(false);
+  const [feeError, setFeeError] = useState(null);
+  const districtRequestRef = useRef(0);
+  const wardRequestRef = useRef(0);
+  const feeRequestRef = useRef(0);
+
+  const GHN_FROM_DISTRICT_ID = Number(import.meta.env.VITE_GHN_FROM_DISTRICT_ID || 0);
+  const GHN_FROM_WARD_CODE = import.meta.env.VITE_GHN_FROM_WARD_CODE || "";
+
+  const normalizeProvinceData = (data = []) =>
+    (Array.isArray(data) ? data : []).map((item) => ({
+      provinceId: item?.provinceId ?? item?.ProvinceID ?? item?.ProvinceId ?? item?.id ?? item?.provinceID,
+      provinceName: item?.provinceName ?? item?.ProvinceName ?? item?.name ?? "",
+    }));
+
+  const normalizeDistrictData = (data = []) =>
+    (Array.isArray(data) ? data : []).map((item) => ({
+      districtId: item?.districtId ?? item?.DistrictID ?? item?.DistrictId ?? item?.id ?? item?.districtID,
+      districtName: item?.districtName ?? item?.DistrictName ?? item?.name ?? "",
+      provinceId: item?.provinceId ?? item?.ProvinceID ?? item?.ProvinceId ?? item?.provinceID ?? null,
+    }));
+
+  const normalizeWardData = (data = []) =>
+    (Array.isArray(data) ? data : []).map((item) => ({
+      wardCode: item?.wardCode ?? item?.WardCode ?? item?.code ?? item?.id ?? item?.wardID,
+      wardName: item?.wardName ?? item?.WardName ?? item?.name ?? "",
+      districtId: item?.districtId ?? item?.DistrictID ?? item?.DistrictId ?? item?.districtID ?? null,
+    }));
+
+  // #region agent log
+  useEffect(() => {
+    fetch('http://127.0.0.1:7583/ingest/b7b6a8d6-8ef5-4ebe-ba7d-aae6265a00d7',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'c76d45'},body:JSON.stringify({sessionId:'c76d45',location:'CheckoutPage.jsx:mount',message:'GHN env config',data:{fromDistrictId:GHN_FROM_DISTRICT_ID,fromWardCode:GHN_FROM_WARD_CODE,apiUrl:import.meta.env.VITE_API_URL||'(empty)'},timestamp:Date.now(),hypothesisId:'A'})}).catch(()=>{});
+  }, []);
+  // #endregion
 
   useEffect(() => {
     if (!user) { navigate("/login"); return; }
     if (cartItems.length === 0) { navigate("/cart"); return; }
   }, [user, cartItems]);
 
-  // Location selects
-  const [provinces, setProvinces] = useState([]);
-  const [districts, setDistricts] = useState([]);
-  const [wards, setWards] = useState([]);
-
   useEffect(() => {
-    // load full locations (from local file or public API)
-    loadLocations().then(() => setProvinces(getProvinces())).catch(() => setProvinces(getProvinces()));
+    ghnApi.getProvinces()
+      .then((res) => {
+        const data = normalizeProvinceData(res.data?.data || res.data || []);
+        // #region agent log
+        fetch('http://127.0.0.1:7583/ingest/b7b6a8d6-8ef5-4ebe-ba7d-aae6265a00d7',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'c76d45'},body:JSON.stringify({sessionId:'c76d45',location:'CheckoutPage.jsx:provinces',message:'provinces loaded',data:{count:Array.isArray(data)?data.length:0,sample:Array.isArray(data)&&data[0]?data[0]:null,status:res.status},timestamp:Date.now(),hypothesisId:'B'})}).catch(()=>{});
+        // #endregion
+        setProvinces(data);
+      })
+      .catch((err) => {
+        // #region agent log
+        fetch('http://127.0.0.1:7583/ingest/b7b6a8d6-8ef5-4ebe-ba7d-aae6265a00d7',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'c76d45'},body:JSON.stringify({sessionId:'c76d45',location:'CheckoutPage.jsx:provinces',message:'provinces failed',data:{status:err.response?.status,message:err.response?.data?.message||err.message},timestamp:Date.now(),hypothesisId:'B'})}).catch(()=>{});
+        // #endregion
+        console.error("GHN provinces load failed", err);
+        setProvinces([]);
+      });
   }, []);
 
   useEffect(() => {
-    if (form.receiverProvince) {
-      setDistricts(getDistricts(form.receiverProvince));
-    } else {
+    if (!form.receiverProvince) {
       setDistricts([]);
+      setWards([]);
+      setFeeInfo(null);
+      setFeeError(null);
+      return;
     }
-    setForm((f) => ({ ...f, receiverDistrict: "", receiverWard: "" }));
+
+    const requestId = ++districtRequestRef.current;
+    wardRequestRef.current += 1;
+    feeRequestRef.current += 1;
+
+    setDistricts([]);
     setWards([]);
+    setForm((f) => ({ ...f, receiverDistrict: "", receiverWard: "" }));
+    setFeeInfo(null);
+    setFeeError(null);
+
+    ghnApi.getDistricts(Number(form.receiverProvince))
+      .then((res) => {
+        if (requestId !== districtRequestRef.current) return;
+        const data = normalizeDistrictData(res.data?.data || res.data || []);
+        setDistricts(data);
+      })
+      .catch((err) => {
+        if (requestId !== districtRequestRef.current) return;
+        console.error("GHN districts load failed", err);
+        setDistricts([]);
+      });
   }, [form.receiverProvince]);
 
   useEffect(() => {
-    if (form.receiverProvince && form.receiverDistrict) {
-      setWards(getWards(form.receiverProvince, form.receiverDistrict));
-    } else {
+    if (!form.receiverProvince || !form.receiverDistrict) {
       setWards([]);
+      setFeeInfo(null);
+      setFeeError(null);
+      return;
     }
-    setForm((f) => ({ ...f, receiverWard: "" }));
-  }, [form.receiverDistrict]);
 
-  const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
+    const wardRequestId = ++wardRequestRef.current;
+
+    setWards([]);
+    setForm((f) => ({ ...f, receiverWard: "" }));
+    setFeeInfo(null);
+
+    ghnApi.getWards(Number(form.receiverDistrict))
+      .then((res) => {
+        if (wardRequestId !== wardRequestRef.current) return;
+        const data = normalizeWardData(res.data?.data || res.data || []);
+        setWards(data);
+      })
+      .catch((err) => {
+        if (wardRequestId !== wardRequestRef.current) return;
+        console.error("GHN wards load failed", err);
+        setWards([]);
+      });
+
+    if (!GHN_FROM_DISTRICT_ID || !Number(form.receiverDistrict)) {
+      setFeeError("Thiếu thông tin quận/huyện hoặc cấu hình GHN kho gửi");
+    }
+  }, [form.receiverProvince, form.receiverDistrict]);
+
+  useEffect(() => {
+    if (!form.receiverDistrict || !form.receiverWard || !GHN_FROM_DISTRICT_ID || !GHN_FROM_WARD_CODE) {
+      setFeeInfo(null);
+      return;
+    }
+
+    const requestId = ++feeRequestRef.current;
+
+    setFeeLoading(true);
+    setFeeError(null);
+    ghnApi.getFee({
+      toDistrictId: Number(form.receiverDistrict),
+      toWardCode: form.receiverWard,
+      insuranceValue: Math.round(getTotal()),
+      coupon: null,
+    })
+      .then((res) => {
+        if (requestId !== feeRequestRef.current) return;
+        const data = res.data?.data || res.data || null;
+        // #region agent log
+        fetch('http://127.0.0.1:7583/ingest/b7b6a8d6-8ef5-4ebe-ba7d-aae6265a00d7',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'c76d45'},body:JSON.stringify({sessionId:'c76d45',location:'CheckoutPage.jsx:fee',message:'fee calculated',data:{fee:data},timestamp:Date.now(),hypothesisId:'D'})}).catch(()=>{});
+        // #endregion
+        setFeeInfo(data);
+      })
+      .catch((err) => {
+        if (requestId !== feeRequestRef.current) return;
+        // #region agent log
+        fetch('http://127.0.0.1:7583/ingest/b7b6a8d6-8ef5-4ebe-ba7d-aae6265a00d7',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'c76d45'},body:JSON.stringify({sessionId:'c76d45',location:'CheckoutPage.jsx:fee',message:'fee failed',data:{status:err.response?.status,message:err.response?.data?.message||err.message},timestamp:Date.now(),hypothesisId:'D'})}).catch(()=>{});
+        // #endregion
+        console.error("GHN fee calculation failed", err);
+        setFeeInfo(null);
+        setFeeError("Không tính được phí ship GHN");
+      })
+      .finally(() => {
+        if (requestId === feeRequestRef.current) {
+          setFeeLoading(false);
+        }
+      });
+  }, [form.receiverDistrict, form.receiverWard]);
+
+  const handleChange = (e) => setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setSubmitting(true);
     try {
-      // Compose receiverAddress from parts for backend compatibility
-      const provinceName = getProvinceName(form.receiverProvince) || form.receiverProvince;
-      const districtName = getDistrictName(form.receiverProvince, form.receiverDistrict) || form.receiverDistrict;
-      const wardName = getWardName(form.receiverProvince, form.receiverDistrict, form.receiverWard) || form.receiverWard;
+      const detailedAddress = form.receiverAddress?.trim();
+      const provinceName = provinces.find((p) => String(p.provinceId) === String(form.receiverProvince))?.provinceName || form.receiverProvince;
+      const districtName = districts.find((d) => String(d.districtId) === String(form.receiverDistrict))?.districtName || form.receiverDistrict;
+      const wardName = wards.find((w) => String(w.wardCode) === String(form.receiverWard))?.wardName || form.receiverWard;
       const composedAddress = [
+        detailedAddress,
         wardName && String(wardName).trim(),
-        districtName && districtName.trim(),
-        provinceName && provinceName.trim(),
+        districtName && String(districtName).trim(),
+        provinceName && String(provinceName).trim(),
       ].filter(Boolean).join(', ');
 
-      // update local form state so UI reflects final composed address
-      setForm((f) => ({ ...f, receiverAddress: composedAddress || f.receiverAddress }));
+      setForm((f) => ({ ...f, receiverAddress: detailedAddress || f.receiverAddress }));
 
       const orderData = {
         ...form,
-        receiverAddress: composedAddress || form.receiverAddress,
+        receiverAddress: composedAddress,
         cartDetailIds: selectedIds,
       };
 
       await orderApi.createOrder(orderData);
+      // #region agent log
+      fetch('http://127.0.0.1:7583/ingest/b7b6a8d6-8ef5-4ebe-ba7d-aae6265a00d7',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'c76d45'},body:JSON.stringify({sessionId:'c76d45',location:'CheckoutPage.jsx:submit',message:'order created',data:{cartDetailCount:selectedIds.length,hasFeeInfo:!!feeInfo},timestamp:Date.now(),hypothesisId:'E'})}).catch(()=>{});
+      // #endregion
       removeSelectedItems();
       setSuccess(true);
     } catch (err) {
+      // #region agent log
+      fetch('http://127.0.0.1:7583/ingest/b7b6a8d6-8ef5-4ebe-ba7d-aae6265a00d7',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'c76d45'},body:JSON.stringify({sessionId:'c76d45',location:'CheckoutPage.jsx:submit',message:'order failed',data:{status:err.response?.status,message:err.response?.data?.message||err.message},timestamp:Date.now(),hypothesisId:'E'})}).catch(()=>{});
+      // #endregion
       alert(err.response?.data?.message || "Đặt hàng thất bại, vui lòng thử lại!");
     } finally {
       setSubmitting(false);
@@ -97,7 +233,10 @@ export default function CheckoutPage() {
   const subtotal = getTotal();
   const freeShipLimit = parseInt(getSetting("FREE_SHIP_LIMIT", "500000"), 10);
   const baseShippingFee = parseInt(getSetting("SHIPPING_FEE", "30000"), 10);
-  const shipping = subtotal >= freeShipLimit ? 0 : baseShippingFee;
+  const ghFee = feeInfo
+    ? (feeInfo.serviceFee || 0) + (feeInfo.insuranceFee || 0) + (feeInfo.pickStationFee || 0) + (feeInfo.r2sFee || 0)
+    : null;
+  const shipping = ghFee !== null ? ghFee : subtotal >= freeShipLimit ? 0 : baseShippingFee;
 
   if (success) return (
     <div className="min-h-screen bg-surface-soft flex items-center justify-center px-4">
@@ -155,29 +294,47 @@ export default function CheckoutPage() {
                     <select
                       name="receiverProvince"
                       value={form.receiverProvince}
-                      onChange={(e) => setForm({ ...form, receiverProvince: e.target.value })}
+                      onChange={(e) => {
+                        const value = e.target.value;
+                        setForm((prev) => ({ ...prev, receiverProvince: value, receiverDistrict: "", receiverWard: "" }));
+                      }}
                       required
                       className="input-field"
                     >
                       <option value="">Chọn Tỉnh/Thành</option>
                       {provinces.map((p) => (
-                        <option key={p.code} value={p.code}>{p.name}</option>
+                        <option key={String(p.provinceId)} value={String(p.provinceId)}>
+                          {p.provinceName}
+                        </option>
                       ))}
                     </select>
                   </div>
 
                   <div>
-                    <label className="block text-sm font-semibold text-text-secondary mb-2">Quận/Huyện *</label>
+                    <label className="block text-sm font-semibold text-text-secondary mb-2">
+                      Quận/Huyện *
+                      {form.receiverProvince && (
+                        <span className="text-xs text-text-muted block mt-1">
+                          Tỉnh đã chọn: {provinces.find((p) => String(p.provinceId) === String(form.receiverProvince))?.provinceName || ""} ({form.receiverProvince})
+                        </span>
+                      )}
+                    </label>
                     <select
+                      key={form.receiverProvince || "empty-province"}
                       name="receiverDistrict"
                       value={form.receiverDistrict}
-                      onChange={(e) => setForm({ ...form, receiverDistrict: e.target.value })}
+                      onChange={(e) => {
+                        const value = e.target.value;
+                        setForm((prev) => ({ ...prev, receiverDistrict: value, receiverWard: "" }));
+                      }}
                       required
                       className="input-field"
                     >
                       <option value="">Chọn Quận/Huyện</option>
                       {districts.map((d) => (
-                        <option key={d.code} value={d.code}>{d.name}</option>
+                        <option key={String(d.districtId)} value={String(d.districtId)}>
+                          {d.districtName}
+                        </option>
                       ))}
                     </select>
                   </div>
@@ -185,21 +342,40 @@ export default function CheckoutPage() {
                   <div>
                     <label className="block text-sm font-semibold text-text-secondary mb-2">Xã/Phường *</label>
                     <select
+                      key={form.receiverDistrict || "empty-district"}
                       name="receiverWard"
                       value={form.receiverWard}
-                      onChange={(e) => setForm({ ...form, receiverWard: e.target.value })}
+                      onChange={(e) => setForm((prev) => ({ ...prev, receiverWard: e.target.value }))}
                       required
                       className="input-field"
                     >
                       <option value="">Chọn Xã/Phường</option>
                       {wards.map((w) => (
-                        <option key={w.code} value={w.code}>{w.name}</option>
+                        <option key={String(w.wardCode)} value={String(w.wardCode)}>{w.wardName}</option>
                       ))}
                     </select>
                   </div>
 
                   <div className="md:col-span-2">
-                    <p className="text-sm text-text-muted">Địa chỉ sẽ được ghép từ Xã/Phường, Quận/Huyện, Tỉnh/Thành.</p>
+                    <label className="block text-sm font-semibold text-text-secondary mb-2">Địa chỉ chi tiết *</label>
+                    <input
+                      name="receiverAddress"
+                      required
+                      value={form.receiverAddress}
+                      onChange={handleChange}
+                      placeholder="Số nhà, tên đường, khu vực..."
+                      className="input-field"
+                    />
+                  </div>
+
+                  {!GHN_FROM_DISTRICT_ID && (
+                    <div className="md:col-span-2">
+                      <p className="text-xs text-text-muted mt-2">Không cấu hình GHN kho gửi. Vui lòng đặt VITE_GHN_FROM_DISTRICT_ID và VITE_GHN_FROM_WARD_CODE.</p>
+                    </div>
+                  )}
+
+                  <div className="md:col-span-2">
+                    <p className="text-sm text-text-muted">Địa chỉ sẽ được ghép từ Địa chỉ chi tiết, Xã/Phường, Quận/Huyện, Tỉnh/Thành.</p>
                   </div>
 
                   <div className="md:col-span-2">
@@ -259,9 +435,18 @@ export default function CheckoutPage() {
                     <span className="font-semibold">{formatVND(subtotal)}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-text-secondary">Vận chuyển</span>
-                    <span className="font-semibold text-brand-green">{shipping === 0 ? "Miễn phí" : formatVND(shipping)}</span>
+                    <span className="text-text-secondary">Phí ship</span>
+                    <span className="font-semibold text-brand-green">{feeLoading ? "Đang tính..." : feeInfo ? formatVND(ghFee) : (subtotal >= freeShipLimit ? "Miễn phí" : formatVND(baseShippingFee))}</span>
                   </div>
+                  {feeInfo && (
+                    <div className="text-xs text-text-muted mt-2 space-y-1">
+                      <p>Phí dịch vụ: {formatVND(feeInfo.serviceFee || 0)}</p>
+                      <p>Phí bảo hiểm: {formatVND(feeInfo.insuranceFee || 0)}</p>
+                      {feeInfo.pickStationFee != null && <p>Phí nhận hàng: {formatVND(feeInfo.pickStationFee)}</p>}
+                      {feeInfo.r2sFee != null && <p>Phí r2s: {formatVND(feeInfo.r2sFee)}</p>}
+                    </div>
+                  )}
+                  {feeError && <p className="text-xs text-danger mt-2">{feeError}</p>}
                 </div>
                 <div className="flex justify-between pt-4 mb-6 mt-2 border-t border-surface-border">
                   <span className="font-bold text-text-primary">Tổng cộng</span>

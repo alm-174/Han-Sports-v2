@@ -53,10 +53,4 @@ export function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
 }
 
-export const ORDER_STATUS = {
-  PENDING: { label: "Chờ xác nhận", color: "badge-blue" },
-  PROCESSING: { label: "Đang xử lý", color: "badge-blue" },
-  SHIPPING: { label: "Đang giao", color: "badge-green" },
-  COMPLETED: { label: "Hoàn thành", color: "badge-green" },
-  CANCELLED: { label: "Đã hủy", color: "badge-danger" },
-};
+export { ORDER_STATUS, ORDER_STATUS_LIST, ORDER_TIMELINE_STEPS, getOrderStatusInfo, normalizeOrderStatus, canCancelOrder, canConfirmOrder, canPrintOrder, getTimelineStepIndex } from "./orderStatus";
